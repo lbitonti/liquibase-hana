@@ -2,12 +2,12 @@ package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.database.structure.Index;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.CreateIndexGenerator;
 import liquibase.statement.core.CreateIndexStatement;
+import liquibase.structure.core.Index;
 import liquibase.util.StringUtils;
 
 import java.util.Arrays;
@@ -49,20 +49,23 @@ public class CreateIndexGeneratorHanaDB extends CreateIndexGenerator {
 
 	    if (statement.getIndexName() != null) {
             String indexSchema = statement.getTableSchemaName();
-            buffer.append(database.escapeIndexName(null, statement.getIndexName())).append(" ");
+//            buffer.append(database.escapeIndexName(null, statement.getIndexName())).append(" ");
+            buffer.append(database.escapeIndexName(statement.getTableCatalogName(), indexSchema, statement.getIndexName())).append(" ");
 	    }
 	    buffer.append("ON ");
-	    buffer.append(database.escapeTableName(statement.getTableSchemaName(), statement.getTableName())).append(" (");
+	    buffer.append(database.escapeTableName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName())).append(" (");
 	    Iterator<String> iterator = Arrays.asList(statement.getColumns()).iterator();
 	    while (iterator.hasNext()) {
 		    String column = iterator.next();
-		    buffer.append(database.escapeColumnName(statement.getTableSchemaName(), statement.getTableName(), column));
+		    buffer.append(database.escapeColumnName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName(), column));
 		    if (iterator.hasNext()) {
 			    buffer.append(", ");
 		    }
 	    }
 	    buffer.append(")");
 
-	    return new Sql[]{new UnparsedSql(buffer.toString())};
+//	    return new Sql[]{new UnparsedSql(buffer.toString())};
+        return new Sql[]{new UnparsedSql(buffer.toString(), getAffectedIndex(statement))};
     }
+
 }

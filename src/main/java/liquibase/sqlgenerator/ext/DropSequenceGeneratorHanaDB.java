@@ -3,11 +3,9 @@ package liquibase.sqlgenerator.ext;
 import liquibase.database.Database;
 import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.PostgresDatabase;
-import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.DropSequenceGenerator;
 import liquibase.statement.core.DropSequenceStatement;
 
@@ -19,7 +17,8 @@ public class DropSequenceGeneratorHanaDB extends DropSequenceGenerator {
     }
 
     public Sql[] generateSql(DropSequenceStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String sql = "DROP SEQUENCE " + database.escapeSequenceName(statement.getSchemaName(), statement.getSequenceName());
+        String sql = "DROP SEQUENCE " +
+                database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName());
         if (database instanceof PostgresDatabase) {
             sql += " CASCADE";
         }
@@ -27,7 +26,7 @@ public class DropSequenceGeneratorHanaDB extends DropSequenceGenerator {
             sql += " RESTRICT";
         }
         return new Sql[] {
-                new UnparsedSql(sql)
+                new UnparsedSql(sql, getAffectedSequence(statement))
         };
     }
 }

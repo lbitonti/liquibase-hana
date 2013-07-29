@@ -28,7 +28,7 @@ public class CreateSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaD
 
 	@Override
 	protected CreateSequenceStatement createSampleSqlStatement() {
-        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, "sequence_name");
+        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, null, "sequence_name");
 //        createSequenceStatement.setMinValue(new BigInteger("100"));
         return createSequenceStatement;
     }
@@ -37,7 +37,7 @@ public class CreateSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaD
     @Test
     public void testCreateMinValue() throws Exception {
         super.isValid();
-        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, "sequence_name");
+        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, null, "sequence_name");
         createSequenceStatement.setMinValue(new BigInteger("1001"));
 
         Database hanadb = new HanaDBDatabase();
@@ -53,7 +53,7 @@ public class CreateSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaD
     @Test
     public void testCreateIncrementByAndMinValue() throws Exception {
         super.isValid();
-        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, "sequence_name");
+        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, null, "sequence_name");
         createSequenceStatement.setIncrementBy(new BigInteger("5"));
         createSequenceStatement.setMinValue(new BigInteger("2100"));
 
@@ -70,7 +70,7 @@ public class CreateSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaD
     @Test
     public void testCreateOrdered() throws Exception {
         super.isValid();
-        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, "sequence_name");
+        CreateSequenceStatement createSequenceStatement = new CreateSequenceStatement(null, null, "sequence_name");
         createSequenceStatement.setOrdered(true);
 
         Database hanadb = new HanaDBDatabase();

@@ -2,10 +2,7 @@ package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.database.structure.Column;
-import liquibase.database.structure.Table;
-import liquibase.database.typeconversion.TypeConverter;
-import liquibase.database.typeconversion.TypeConverterFactory;
+import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -28,19 +25,13 @@ public class AddDefaultValueGeneratorHanaDB extends AddDefaultValueGenerator {
     @Override
     public Sql[] generateSql(AddDefaultValueStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         Object defaultValue = statement.getDefaultValue();
-        TypeConverter typeConverter = TypeConverterFactory.getInstance().findTypeConverter(database);
-
-        String sql = "ALTER TABLE " + database.escapeTableName(statement.getSchemaName(), statement.getTableName()) +
-                " ALTER (" + database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                " " + typeConverter.getDataType(statement.getColumnDataType(), false) +
-                " DEFAULT " + typeConverter.getDataType(defaultValue).convertObjectToString(defaultValue, database) +
-                ")";
-
         return new Sql[]{
-            new UnparsedSql(sql,
-                    new Column()
-                            .setTable(new Table(statement.getTableName()).setSchema(statement.getSchemaName()))
-                            .setName(statement.getColumnName()))
+                new UnparsedSql("ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+                        " ALTER (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
+                        " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnDataType()).toDatabaseDataType(database) +
+                        " DEFAULT " + DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database) +
+                        ")",
+                        getAffectedColumn(statement))
         };
     }
 

@@ -16,7 +16,7 @@ public class AddAutoIncrementGeneratorHanaDBTest {
         AddAutoIncrementGeneratorHanaDB generatorUnderTest = new AddAutoIncrementGeneratorHanaDB();
 
         AddAutoIncrementStatement addAutoIncrementStatement =
-                new AddAutoIncrementStatement(null, "table_name", "column_name", "column_type", new BigInteger("1"), new BigInteger("1"));
+                new AddAutoIncrementStatement(null, null, "table_name", "column_name", "column_type", new BigInteger("1"), new BigInteger("1"));
 
         assertFalse(generatorUnderTest.supports(addAutoIncrementStatement, new HanaDBDatabase()));
     }

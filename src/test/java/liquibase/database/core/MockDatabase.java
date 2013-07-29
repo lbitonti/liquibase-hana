@@ -1,5 +1,6 @@
 package liquibase.database.core;
 
+import liquibase.CatalogAndSchema;
 import liquibase.Liquibase;
 import liquibase.change.Change;
 import liquibase.changelog.ChangeSet;
@@ -7,11 +8,11 @@ import liquibase.changelog.DatabaseChangeLog;
 import liquibase.changelog.RanChangeSet;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
-import liquibase.database.structure.DatabaseObject;
-import liquibase.diff.DiffStatusListener;
+import liquibase.database.ObjectQuotingStrategy;
+import liquibase.structure.DatabaseObject;
+import liquibase.structure.core.Schema;
 import liquibase.exception.*;
 import liquibase.lockservice.DatabaseChangeLogLock;
-import liquibase.snapshot.DatabaseSnapshotGenerator;
 import liquibase.sql.visitor.SqlVisitor;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SqlStatement;
@@ -24,7 +25,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class MockDatabase implements Database {
 
@@ -32,8 +32,29 @@ public class MockDatabase implements Database {
         return PRIORITY_DEFAULT;
     }
 
+
+    public Schema getSchema() {
+        return null;
+    }
+
+    public String getName() {
+        return "Mock Database";
+    }
+
+    public CatalogAndSchema getDefaultSchema() {
+        return new CatalogAndSchema("default", "default");
+    }
+
+    public Integer getDefaultPort() {
+        return null;
+    }
+
     public DatabaseObject[] getContainingObjects() {
         return null;
+    }
+
+    public boolean equals(DatabaseObject otherObject, Database accordingTo) {
+        return otherObject.getName().equalsIgnoreCase(this.getName());
     }
 
     public void setCanCacheLiquibaseTableInfo(boolean canCacheLiquibaseTableInfo) {
@@ -74,6 +95,11 @@ public class MockDatabase implements Database {
         return false;
     }
 
+
+    public boolean isCaseSensitive() {
+        return false;
+    }
+
     public void setAutoCommit(boolean b) throws DatabaseException {
 
     }
@@ -99,7 +125,7 @@ public class MockDatabase implements Database {
         return 0;
     }
 
-    public String getTypeName() {
+    public String getShortName() {
         return null;
     }
 
@@ -115,8 +141,12 @@ public class MockDatabase implements Database {
         return null;
     }
 
-    public String getDefaultCatalogName() throws DatabaseException {
+    public String getDefaultCatalogName() {
         return null;
+    }
+
+    public void setDefaultCatalogName(String catalogName) throws DatabaseException {
+
     }
 
     public String getDefaultSchemaName()  {
@@ -124,7 +154,7 @@ public class MockDatabase implements Database {
     }
 
     public void setDefaultSchemaName(String schemaName) throws DatabaseException {
-        
+
     }
 
     public boolean supportsInitiallyDeferrableColumns() {
@@ -172,9 +202,9 @@ public class MockDatabase implements Database {
     }
 
     public String getAutoIncrementClause(BigInteger startWith, BigInteger incrementBy) {
-    	return "AUTO_INCREMENT_CLAUSE"
-    			+ startWith != null ? (" " + startWith) : ""
-    		    + incrementBy != null ? (" " + incrementBy) : "";
+        return "AUTO_INCREMENT_CLAUSE"
+                + startWith != null ? (" " + startWith) : ""
+                + incrementBy != null ? (" " + incrementBy) : "";
     }
 
     public SqlStatement getCommitSQL() {
@@ -194,24 +224,24 @@ public class MockDatabase implements Database {
     public String getDatabaseChangeLogLockTableName() {
         return "DATABASECHANGELOGLOCK";
     }
-    
+
     /**
      * Does nothing
-     * 
-     * @see liquibase.database.Database#setDatabaseChangeLogLockTableName(String)
+     *
+     * @see liquibase.database.Database#setDatabaseChangeLogLockTableName(java.lang.String)
      */
     public void setDatabaseChangeLogLockTableName(String tableName) {
     }
 
-	/**
-	 * Does nothing
-	 *
-     * @see liquibase.database.Database#setDatabaseChangeLogTableName(String)
+    /**
+     * Does nothing
+     *
+     * @see liquibase.database.Database#setDatabaseChangeLogTableName(java.lang.String)
      */
     public void setDatabaseChangeLogTableName(String tableName) {
     }
 
-	public String getConcatSql(String... values) {
+    public String getConcatSql(String... values) {
         return null;
     }
 
@@ -240,7 +270,7 @@ public class MockDatabase implements Database {
     public void checkDatabaseChangeLogLockTable(Liquibase liquibase) throws DatabaseException, IOException {
     }
 
-    public void dropDatabaseObjects(String schema) throws DatabaseException {
+    public void dropDatabaseObjects(CatalogAndSchema schema) throws DatabaseException {
     }
 
     public void tag(String tagString) throws DatabaseException {
@@ -250,28 +280,20 @@ public class MockDatabase implements Database {
         return false;
     }
 
-    public boolean isSystemTable(String catalogName, String schemaName, String tableName) {
+
+    public boolean isSystemObject(DatabaseObject example) {
         return false;
     }
 
-
-    public boolean isSystemView(String catalogName, String schemaName, String name) {
+    public boolean isLiquibaseObject(DatabaseObject object) {
         return false;
-    }
-
-    public boolean isLiquibaseTable(String tableName) {
-        return false;
-    }
-
-    public boolean shouldQuoteValue(String value) {
-        return true;
     }
 
     public boolean supportsTablespaces() {
         return false;
     }
 
-    public String getViewDefinition(String schemaName, String name) throws DatabaseException {
+    public String getViewDefinition(CatalogAndSchema schema, String name) throws DatabaseException {
         return null;
     }
 
@@ -283,7 +305,7 @@ public class MockDatabase implements Database {
         return defaultDateValue.toString();
     }
 
-    public String escapeTableName(String schemaName, String tableName) {
+    public String escapeTableName(String catalogName, String schemaName, String tableName) {
         if (schemaName == null) {
             return tableName;
         } else {
@@ -291,11 +313,11 @@ public class MockDatabase implements Database {
         }
     }
 
-    public String escapeIndexName(String schemaName, String indexName) {
-        return escapeTableName(schemaName, indexName);
+    public String escapeIndexName(String catalogName, String schemaName, String indexName) {
+        return escapeTableName(catalogName, schemaName, indexName);
     }
 
-    public String escapeColumnName(String schemaName, String tableName, String columnName) {
+    public String escapeColumnName(String catalogName, String schemaName, String tableName, String columnName) {
         return columnName;
     }
 
@@ -303,7 +325,7 @@ public class MockDatabase implements Database {
         return columnNames;
     }
 
-    public String escapeSequenceName(String schemaName, String sequenceName) {
+    public String escapeSequenceName(String catalogName, String schemaName, String sequenceName) {
         if (sequenceName == null) {
             return sequenceName;
         } else {
@@ -323,12 +345,20 @@ public class MockDatabase implements Database {
         return true;
     }
 
+    public boolean supportsCatalogs() {
+        return true;
+    }
+
+    public boolean supportsCatalogInObjectName() {
+        return true;
+    }
+
     public String generatePrimaryKeyName(String tableName) {
         return "PK_"+tableName;
     }
 
-    public String escapeViewName(String schemaName, String viewName) {
-        return escapeTableName(schemaName, viewName);
+    public String escapeViewName(String catalogName, String schemaName, String viewName) {
+        return escapeTableName(catalogName, schemaName, viewName);
     }
 
     public boolean acquireLock() throws LockException {
@@ -387,10 +417,6 @@ public class MockDatabase implements Database {
         ;
     }
 
-    public DatabaseSnapshotGenerator createDatabaseSnapshot(String schema, Set<DiffStatusListener> statusListeners) throws DatabaseException {
-        return null;
-    }
-
     public boolean supportsRestrictForeignKeys() {
         return true;
     }
@@ -398,16 +424,20 @@ public class MockDatabase implements Database {
     public String escapeConstraintName(String constraintName) {
         return constraintName;
     }
-    
-    public boolean isLocalDatabase() throws DatabaseException {
-    	return true;
+
+    public boolean isSafeToRunUpdate() throws DatabaseException {
+        return true;
     }
 
-    public String escapeDatabaseObject(String objectName) {
+    public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
         return objectName;
     }
 
-    public void executeStatements(Change change, DatabaseChangeLog changeLog, List<SqlVisitor> sqlVisitors) throws LiquibaseException, UnsupportedChangeException {
+    public String escapeObjectName(String catalogName, String schemaName, String objectName, Class<? extends DatabaseObject> objectType) {
+        return catalogName +"."+schemaName+"."+objectName;
+    }
+
+    public void executeStatements(Change change, DatabaseChangeLog changeLog, List<SqlVisitor> sqlVisitors) throws LiquibaseException {
         ;
     }
 
@@ -415,21 +445,33 @@ public class MockDatabase implements Database {
         ;
     }
 
-    public void saveStatements(Change change, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, UnsupportedChangeException, StatementNotSupportedOnDatabaseException, LiquibaseException {
+    public void saveStatements(Change change, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, StatementNotSupportedOnDatabaseException, LiquibaseException {
         ;
     }
 
-    public void executeRollbackStatements(Change change, List<SqlVisitor> sqlVisitors) throws LiquibaseException, UnsupportedChangeException, RollbackImpossibleException {
+    public void executeRollbackStatements(Change change, List<SqlVisitor> sqlVisitors) throws LiquibaseException, RollbackImpossibleException {
         ;
     }
 
-    public void saveRollbackStatement(Change change, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, UnsupportedChangeException, RollbackImpossibleException, StatementNotSupportedOnDatabaseException, LiquibaseException {
+    public void saveRollbackStatement(Change change, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, RollbackImpossibleException, StatementNotSupportedOnDatabaseException, LiquibaseException {
         ;
     }
 
-	public String getLiquibaseSchemaName(){
-		return null;
-	}
+    public String getLiquibaseCatalogName() {
+        return null;
+    }
+
+    public String getLiquibaseSchemaName(){
+        return null;
+    }
+
+    public String getLiquibaseTablespaceName() {
+        return null;
+    }
+
+    public void setLiquibaseTablespaceName(String tablespaceName) {
+
+    }
 
     public int getNextChangeSetSequenceValue() throws LiquibaseException {
         return 1;
@@ -439,15 +481,15 @@ public class MockDatabase implements Database {
         return new Date();
     }
 
-	public List<DatabaseFunction> getDatabaseFunctions() {
-		return null;
-	}
-
-    public void reset() {
-        
+    public List<DatabaseFunction> getDateFunctions() {
+        return null;
     }
-    
-        public boolean supportsForeignKeyDisable() {
+
+    public void resetInternalState() {
+
+    }
+
+    public boolean supportsForeignKeyDisable() {
         return false;
     }
 
@@ -456,14 +498,76 @@ public class MockDatabase implements Database {
     }
 
     public void enableForeignKeyChecks() throws DatabaseException {
-        
+
     }
 
     public void updateChecksum(ChangeSet changeSet) throws DatabaseException {
-        
+
     }
 
     public boolean isReservedWord(String string) {
         return false;
+    }
+
+    public CatalogAndSchema correctSchema(CatalogAndSchema schema) {
+        return schema;
+    }
+
+    public String correctObjectName(String name, Class<? extends DatabaseObject> objectType) {
+        return name;
+    }
+
+    public String correctObjectName(String name, Class<? extends DatabaseObject> objectType, boolean quoteCorrectedName) {
+        return name;
+    }
+
+    public boolean isFunction(String string) {
+        if (string.endsWith("()")) {
+            return true;
+        }
+        return false;
+    }
+
+    public int getDataTypeMaxParameters(String dataTypeName) {
+        return 2;
+    }
+
+    public CatalogAndSchema getSchemaFromJdbcInfo(String rawCatalogName, String rawSchemaName) {
+        return new CatalogAndSchema(rawCatalogName, rawSchemaName);
+    }
+
+    public String getJdbcCatalogName(CatalogAndSchema schema) {
+        return schema.getCatalogName();
+    }
+
+    public String getJdbcSchemaName(CatalogAndSchema schema) {
+        return schema.getSchemaName();
+    }
+
+    public String getJdbcCatalogName(Schema schema) {
+        return schema.getCatalogName();
+    }
+
+    public String getJdbcSchemaName(Schema schema) {
+        return schema.getName();
+    }
+
+    public boolean dataTypeIsNotModifiable(String typeName) {
+        return true;
+    }
+
+    public String generateDatabaseFunctionValue(final DatabaseFunction databaseFunction) {
+        return null;
+    }
+
+    public void setObjectQuotingStrategy(ObjectQuotingStrategy quotingStrategy) {
+    }
+
+    public ObjectQuotingStrategy getObjectQuotingStrategy() {
+        return ObjectQuotingStrategy.LEGACY;
+    }
+
+    public boolean supportsCatalogInObjectName(Class<? extends DatabaseObject> type) {
+        return true;
     }
 }

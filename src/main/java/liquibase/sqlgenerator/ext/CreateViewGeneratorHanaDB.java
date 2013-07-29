@@ -45,8 +45,10 @@ public class CreateViewGeneratorHanaDB extends CreateViewGenerator {
 
         List<Sql> sql = new ArrayList<Sql>();
 
-        sql.add(new UnparsedSql("CREATE VIEW " + database.escapeViewName(statement.getSchemaName(), statement.getViewName()) +
-                " AS " + statement.getSelectQuery()));
+        sql.add(new UnparsedSql(
+                "CREATE VIEW " + database.escapeViewName(statement.getCatalogName(), statement.getSchemaName(), statement.getViewName()) +
+                " AS " + statement.getSelectQuery(), getAffectedView(statement))
+        );
 
         return sql.toArray(new Sql[sql.size()]);
     }

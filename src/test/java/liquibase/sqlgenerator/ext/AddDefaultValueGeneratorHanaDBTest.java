@@ -25,7 +25,7 @@ public class AddDefaultValueGeneratorHanaDBTest extends AbstractSqlGeneratorHana
 
 	@Override
 	protected AddDefaultValueStatement createSampleSqlStatement() {
-		return new AddDefaultValueStatement(null, "table_name", "column_name", "column_type", "default_value");
+		return new AddDefaultValueStatement(null, null, "table_name", "column_name", "column_type", "default_value");
 	}
 
 
@@ -33,7 +33,7 @@ public class AddDefaultValueGeneratorHanaDBTest extends AbstractSqlGeneratorHana
     public void testAddIntegerDefaultValue() throws Exception {
         super.isValid();
         AddDefaultValueStatement addDefaultValueStatement =
-                new AddDefaultValueStatement(null, "table_name", "column_name", "INT", new Integer(12));
+                new AddDefaultValueStatement(null, null, "table_name", "column_name", "java.sql.Types.INTEGER", new Integer(12));
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
@@ -49,7 +49,7 @@ public class AddDefaultValueGeneratorHanaDBTest extends AbstractSqlGeneratorHana
     public void testAddVarcharDefaultValue() throws Exception {
         super.isValid();
         AddDefaultValueStatement addDefaultValueStatement =
-                new AddDefaultValueStatement(null, "table_name", "column_name", "VARCHAR", "default_value");
+                new AddDefaultValueStatement(null, null, "table_name", "column_name", "VARCHAR", "default_value");
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();

@@ -20,7 +20,7 @@ public class AddPrimaryKeyGeneratorHanaDBTest {
         AddPrimaryKeyGeneratorHanaDB generatorUnderTest = new AddPrimaryKeyGeneratorHanaDB();
 
         AddPrimaryKeyStatement addPrimaryKeyStatement =
-                new AddPrimaryKeyStatement(null, "table_name", "column_name", "pk_constraint");
+                new AddPrimaryKeyStatement(null, null, "table_name", "column_name", "pk_constraint");
 
         assertFalse(generatorUnderTest.supports(addPrimaryKeyStatement, new HanaDBDatabase()));
     }

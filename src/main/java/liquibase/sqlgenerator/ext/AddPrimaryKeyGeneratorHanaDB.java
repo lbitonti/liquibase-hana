@@ -1,14 +1,7 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MySQLDatabase;
-import liquibase.database.core.SybaseASADatabase;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.sql.Sql;
-import liquibase.sql.UnparsedSql;
-import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AddPrimaryKeyGenerator;
 import liquibase.statement.core.AddPrimaryKeyStatement;
 import liquibase.util.StringUtils;

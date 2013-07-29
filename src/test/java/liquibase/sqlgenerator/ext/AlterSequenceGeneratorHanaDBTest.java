@@ -28,7 +28,7 @@ public class AlterSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDB
 
 	@Override
 	protected AlterSequenceStatement createSampleSqlStatement() {
-        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, "sequence_name");
+        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, null, "sequence_name");
 //        alterSequenceStatement.setOrdered(true);
         alterSequenceStatement.setMinValue(new BigInteger("100"));
         return alterSequenceStatement;
@@ -38,7 +38,7 @@ public class AlterSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDB
     @Test
     public void testAlterMinValue() throws Exception {
         super.isValid();
-        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, "sequence_name");
+        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, null, "sequence_name");
         alterSequenceStatement.setMinValue(new BigInteger("1001"));
 
         Database hanadb = new HanaDBDatabase();
@@ -54,7 +54,7 @@ public class AlterSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDB
     @Test
     public void testAlterIncrementByValue() throws Exception {
         super.isValid();
-        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, "sequence_name");
+        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, null, "sequence_name");
         alterSequenceStatement.setIncrementBy(new BigInteger("5"));
 
         Database hanadb = new HanaDBDatabase();
@@ -70,7 +70,7 @@ public class AlterSequenceGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDB
     @Test
     public void testAlterOrdered() throws Exception {
         super.isValid();
-        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, "sequence_name");
+        AlterSequenceStatement alterSequenceStatement = new AlterSequenceStatement(null, null, "sequence_name");
         alterSequenceStatement.setOrdered(true);
 
         Database hanadb = new HanaDBDatabase();

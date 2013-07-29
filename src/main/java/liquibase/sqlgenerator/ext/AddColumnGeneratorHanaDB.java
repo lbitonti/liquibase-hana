@@ -1,13 +1,8 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.SybaseASADatabase;
-import liquibase.database.core.SybaseDatabase;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.database.structure.Column;
-import liquibase.database.structure.Table;
-import liquibase.database.typeconversion.TypeConverterFactory;
+import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -36,16 +31,17 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
 
         String alterTable = null;
 
-        if ( database instanceof HanaDBDatabase ) {
-            alterTable = "ALTER TABLE " + database.escapeTableName(statement.getSchemaName(), statement.getTableName()) +
-                    " ADD (" + database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                    " " + TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(statement.getColumnType(), statement.isAutoIncrement());
-        }
-        else {
-            alterTable = "ALTER TABLE " + database.escapeTableName(statement.getSchemaName(), statement.getTableName()) +
-                    " ADD " + database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                    " " + TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(statement.getColumnType(), statement.isAutoIncrement());
-        }
+//        if ( database instanceof HanaDBDatabase ) {
+            alterTable = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+                    " ADD (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
+                    " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnType() + (statement.isAutoIncrement() ? "{autoIncrement:true}" : "")).toDatabaseDataType(database);
+//                    " " + TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(statement.getColumnType(), statement.isAutoIncrement());
+//        }
+//        else {
+//            alterTable = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+//                    " ADD " + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
+//                    " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnType() + (statement.isAutoIncrement() ? "{autoIncrement:true}" : "")).toDatabaseDataType(database);
+//        }
 
         if (statement.isAutoIncrement() && database.supportsAutoIncrement()) {
             AutoIncrementConstraint autoIncrementConstraint = statement.getAutoIncrementConstraint();
@@ -54,11 +50,12 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
 
         if (!statement.isNullable()) {
             alterTable += " NOT NULL";
-        } else {
-            if (database instanceof SybaseDatabase || database instanceof SybaseASADatabase) {
-                alterTable += " NULL";
-            }
         }
+//        else {
+//            if (database instanceof SybaseDatabase || database instanceof SybaseASADatabase) {
+//                alterTable += " NULL";
+//            }
+//        }
 
         if (statement.isPrimaryKey()) {
             alterTable += " PRIMARY KEY";
@@ -75,9 +72,7 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
         }
 
         List<Sql> returnSql = new ArrayList<Sql>();
-        returnSql.add(new UnparsedSql(alterTable, new Column()
-                .setTable(new Table(statement.getTableName()).setSchema(statement.getSchemaName()))
-                .setName(statement.getColumnName())));
+        returnSql.add(new UnparsedSql(alterTable, getAffectedColumn(statement)));
 
         addForeignKeyStatements(statement, database, returnSql);
 
@@ -89,10 +84,9 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
         String clause = "";
         Object defaultValue = statement.getDefaultValue();
         if (defaultValue != null) {
-            if (database instanceof MSSQLDatabase) {
-                clause += " CONSTRAINT " + ((MSSQLDatabase) database).generateDefaultConstraintName(statement.getTableName(), statement.getColumnName());
-            }
-            clause += " DEFAULT " + TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(defaultValue).convertObjectToString(defaultValue, database);
+//            clause += " DEFAULT " + TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(defaultValue).convertObjectToString(defaultValue, database);
+//            clause += " DEFAULT " + DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database);
+            clause += " DEFAULT " + DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database);
         }
         return clause;
     }

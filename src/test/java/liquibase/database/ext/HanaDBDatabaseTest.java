@@ -1,6 +1,6 @@
 package liquibase.database.ext;
 
-import liquibase.database.AbstractDatabaseTest;
+import liquibase.database.AbstractJdbcDatabaseTest;
 import liquibase.database.Database;
 import liquibase.database.core.MySQLDatabase;
 import org.junit.Assert;
@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for {@link liquibase.database.ext.HanaDBDatabase}
  */
-public class HanaDBDatabaseTest extends AbstractDatabaseTest {
+public class HanaDBDatabaseTest extends AbstractJdbcDatabaseTest {
 
     public HanaDBDatabaseTest() throws Exception {
         super(new HanaDBDatabase());
@@ -37,26 +37,27 @@ public class HanaDBDatabaseTest extends AbstractDatabaseTest {
         Assert.assertEquals("CURRENT_TIMESTAMP", getDatabase().getCurrentDateTimeFunction());
     }
 
-    public void testGetDefaultDriver() {
-        Database database = new MySQLDatabase();
-
-        assertEquals("com.sap.db.jdbc.Driver", database.getDefaultDriver("jdbc:sap://localhost/liquibase"));
-
-        assertNull(database.getDefaultDriver("jdbc:db2://localhost;databaseName=liquibase"));
-    }
+//    @Test
+//    public void testGetDefaultDriver() {
+//        Database database = new MySQLDatabase();
+//
+//        assertEquals("com.sap.db.jdbc.Driver", database.getDefaultDriver("jdbc:sap://localhost/liquibase"));
+//
+//        assertNull(database.getDefaultDriver("jdbc:db2://localhost;databaseName=liquibase"));
+//    }
 
     @Override
     @Test
     public void escapeTableName_noSchema() {
         Database database = getDatabase();
-        assertEquals("\"tableName\"", database.escapeTableName(null, "tableName"));
+        assertEquals("\"tableName\"", database.escapeTableName(null, null, "tableName"));
     }
 
     @Override
     @Test
     public void escapeTableName_withSchema() {
         Database database = getDatabase();
-        assertEquals("\"schemaName\".\"tableName\"", database.escapeTableName("schemaName", "tableName"));
+        assertEquals("\"schemaName\".\"tableName\"", database.escapeTableName(null, "schemaName", "tableName"));
     }
 
 }

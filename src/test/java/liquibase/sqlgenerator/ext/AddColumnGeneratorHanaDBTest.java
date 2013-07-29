@@ -30,25 +30,26 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
 
 	@Override
 	protected AddColumnStatement createSampleSqlStatement() {
-		return new AddColumnStatement(null, "table_name", "column_name", "column_type", null);
+		return new AddColumnStatement(null, null, "table_name", "column_name", "column_type", null);
 	}
 
 
 	@Override
     public void isValid() throws Exception {
         super.isValid();
-        AddColumnStatement addPKColumn = new AddColumnStatement(null, "table_name", "column_name", "column_type", null, new PrimaryKeyConstraint("pk_name"));
+        AddColumnStatement addPKColumn = new AddColumnStatement(null, null, "table_name", "column_name", "column_type", null, new PrimaryKeyConstraint("pk_name"));
 
         assertFalse(generatorUnderTest.validate(addPKColumn, new HanaDBDatabase(), new MockSqlGeneratorChain()).hasErrors());
         assertTrue(generatorUnderTest.validate(addPKColumn, new H2Database(), new MockSqlGeneratorChain()).getErrorMessages().contains("Cannot add a primary key column"));
 
-        assertTrue(generatorUnderTest.validate(new AddColumnStatement(null, null, null, null, null, new AutoIncrementConstraint()), new MySQLDatabase(), new MockSqlGeneratorChain()).getErrorMessages().contains("Cannot add a non-primary key identity column"));
+        // "catalog_name", "schema_name", "table_name", "column_name", "column_type" ...
+        assertTrue(generatorUnderTest.validate(new AddColumnStatement(null, null, null, null, null, null, new AutoIncrementConstraint()), new MySQLDatabase(), new MockSqlGeneratorChain()).getErrorMessages().contains("Cannot add a non-primary key identity column"));
     }
 
     @Test
     public void testAddVarcharColumnWithDefaultValue() throws Exception {
         super.isValid();
-        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, "table_name", "column_name", "VARCHAR", "default_value", null);
+        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "VARCHAR", "default_value", null);
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
@@ -63,7 +64,7 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
     @Test
     public void testAddIntegerColumnWithDefaultValue() throws Exception {
         super.isValid();
-        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, "table_name", "column_name", "INT", new Integer(10), null);
+        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "INT", new Integer(10), null);
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
@@ -78,7 +79,7 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
     @Test
     public void testAddBooleanColumnWithDefaultValue() throws Exception {
         super.isValid();
-        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, "table_name", "column_name", "BOOLEAN", new Boolean(false), null);
+        AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "BOOLEAN", new Boolean(false), null);
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();

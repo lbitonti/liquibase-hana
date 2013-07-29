@@ -14,7 +14,7 @@ public class AddUniqueConstraintGeneratorHanaDBTest {
         AddUniqueConstraintGeneratorHanaDB generatorUnderTest = new AddUniqueConstraintGeneratorHanaDB();
 
         AddUniqueConstraintStatement addUniqueConstraintStatement =
-                new AddUniqueConstraintStatement(null, "table_name", "column_name", "unique_constraint");
+                new AddUniqueConstraintStatement(null, null, "table_name", "column_name", "unique_constraint");
 
         assertFalse(generatorUnderTest.supports(addUniqueConstraintStatement, new HanaDBDatabase()));
     }

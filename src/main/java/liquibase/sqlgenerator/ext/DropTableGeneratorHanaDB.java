@@ -23,7 +23,8 @@ public class DropTableGeneratorHanaDB extends DropTableGenerator {
 
     public Sql[] generateSql(DropTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("DROP TABLE ").append(database.escapeTableName(statement.getSchemaName(), statement.getTableName()));
+        buffer.append("DROP TABLE ")
+              .append(database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()));
         if (statement.isCascadeConstraints()) {
             buffer.append(" CASCADE");
         }
@@ -32,7 +33,7 @@ public class DropTableGeneratorHanaDB extends DropTableGenerator {
 //        }
 
         return new Sql[]{
-                new UnparsedSql(buffer.toString())
+                new UnparsedSql(buffer.toString(), getAffectedTable(statement))
         };
     }
 

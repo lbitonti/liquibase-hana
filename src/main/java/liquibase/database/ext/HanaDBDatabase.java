@@ -1,20 +1,29 @@
 package liquibase.database.ext;
 
-import liquibase.database.AbstractDatabase;
+
+import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
+import liquibase.database.ObjectQuotingStrategy;
 import liquibase.exception.DatabaseException;
+import liquibase.structure.DatabaseObject;
+import liquibase.structure.core.View;
 
 import java.util.HashSet;
 import java.util.Set;
 
 
-public class HanaDBDatabase extends AbstractDatabase {
+public class HanaDBDatabase extends AbstractJdbcDatabase {
 
     public static final String PRODUCT_NAME = "HDB";
     protected Set<String> systemTablesAndViews = new HashSet<String>();
 
     public HanaDBDatabase() {
         super();
+
+        super.quotingStartCharacter ="\"";
+        super.quotingEndCharacter="\"";
+        setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
+
         systemTablesAndViews.add("---");
 
         systemTablesAndViews.add("AUDIT_POLICIES");
@@ -270,11 +279,11 @@ public class HanaDBDatabase extends AbstractDatabase {
     }
 
     @Override
-    public Set<String> getSystemTablesAndViews() {
+    public Set<String> getSystemViews() {
         return systemTablesAndViews;
     }
 
-    public String getTypeName() {
+    public String getShortName() {
         return "hanadb";
     }
 
@@ -285,6 +294,10 @@ public class HanaDBDatabase extends AbstractDatabase {
     @Override
     public boolean supportsSequences() {
         return true;
+    }
+
+    public Integer getDefaultPort() {
+        return 3415;
     }
 
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
@@ -298,43 +311,35 @@ public class HanaDBDatabase extends AbstractDatabase {
         return null;
     }
 
+    @Override
     public String getCurrentDateTimeFunction() {
         if (currentDateTimeFunction != null) {
             return currentDateTimeFunction;
         }
-        
+
         return "CURRENT_TIMESTAMP";
     }
 
     @Override
-    protected String getDefaultDatabaseSchemaName() throws DatabaseException {//NOPMD
-        return super.getDefaultDatabaseSchemaName().toUpperCase();
+    protected String getDefaultDatabaseProductName() {
+        return PRODUCT_NAME;
     }
 
     @Override
-    public boolean isSystemTable(String catalogName, String schemaName, String tableName) {
-        if (super.isSystemTable(catalogName, schemaName, tableName)) {
-            return true;
-        } else if ("_SYS_SECURITY".equalsIgnoreCase(schemaName)) {
-            return true;
-        } else if ("_SYS_REPO".equalsIgnoreCase(schemaName)) {
-            return true;
-        } else if ("_SYS_STATISTICS".equalsIgnoreCase(schemaName)) {
+    public boolean isSystemObject(DatabaseObject example) {
+        if (super.isSystemObject(example)) {
             return true;
         }
-        return false;
-    }
+        if (example instanceof View && example.getSchema() != null) {
 
-    @Override
-    public boolean isSystemView(String catalogName, String schemaName, String tableName) {
-        if (super.isSystemView(catalogName, schemaName, tableName)) {
-            return true;
-        } else if ("_SYS_SECURITY".equalsIgnoreCase(schemaName)) {
-            return true;
-        } else if ("_SYS_REPO".equalsIgnoreCase(schemaName)) {
-            return true;
-        } else if ("_SYS_STATISTICS".equalsIgnoreCase(schemaName)) {
-            return true;
+            if ("_SYS_SECURITY".equalsIgnoreCase(example.getSchema().getName())) {
+                return true;
+            } else if ("_SYS_REPO".equalsIgnoreCase(example.getSchema().getName())) {
+                return true;
+            } else if ("_SYS_STATISTICS".equalsIgnoreCase(example.getSchema().getName())) {
+                return true;
+            }
+
         }
         return false;
     }
@@ -348,14 +353,9 @@ public class HanaDBDatabase extends AbstractDatabase {
         return false;
     }
 
-    @Override
-    public String escapeDatabaseObject(String objectName) {
-        return "\"" + objectName + "\"";
-    }
-
-    @Override
-    public boolean supportsDDLInTransaction() {
-        return false;
-    }
+//    @Override
+//    public String escapeDatabaseObject(String objectName) {
+//        return "\"" + objectName + "\"";
+//    }
 
 }

@@ -1,26 +1,23 @@
 package liquibase.database;
 
-import liquibase.database.AbstractDatabase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseConnection;
-import org.junit.Test;
-
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+import liquibase.structure.core.Table;
+import org.junit.Test;
 
 /**
  * Base test class for database-specific tests
  */
-public abstract class AbstractDatabaseTest {
+public abstract class AbstractJdbcDatabaseTest {
 
-    protected AbstractDatabase database;
+    protected AbstractJdbcDatabase database;
 
-    protected AbstractDatabaseTest(AbstractDatabase database) throws Exception {
+    protected AbstractJdbcDatabaseTest(AbstractJdbcDatabase database) throws Exception {
         this.database = database;
     }
 
-    public AbstractDatabase getDatabase() {
+    public AbstractJdbcDatabase getDatabase() {
         return database;
     }
 
@@ -30,7 +27,7 @@ public abstract class AbstractDatabaseTest {
 
     public abstract void getCurrentDateTimeFunction();
 
-//    @Test
+    @Test
     public void onlyAdjustAutoCommitOnMismatch() throws Exception {
         // Train expectations for setConnection(). If getAutoCommit() returns the same value the Database wants, based
         // on getAutoCommitMode(), it should _not_ call setAutoCommit(boolean) on the connection
@@ -39,7 +36,6 @@ public abstract class AbstractDatabaseTest {
         expect(connection.getURL()).andReturn("URL");
         expect(connection.getAutoCommit()).andReturn(getDatabase().getAutoCommitMode());
         replay(connection);
-
         getDatabase().setConnection(connection);
         verify(connection);
 
@@ -53,27 +49,14 @@ public abstract class AbstractDatabaseTest {
         verify(connection);
     }
 
-//    @Test
-    public void restoreAutoCommitOnClose() throws Exception {
-        DatabaseConnection connection = createStrictMock(DatabaseConnection.class);
-        expect(connection.getConnectionUserName()).andReturn("user");
-        expect(connection.getURL()).andReturn("URL");
-        expect(connection.getAutoCommit()).andReturn(true);
-        connection.setAutoCommit(eq(false));
-        replay(connection);
 
-        getDatabase().setConnection(connection);
-        verify(connection);
-
-        reset(connection);
-        connection.setAutoCommit(eq(true));
-        connection.close();
-        replay(connection);
-
-        getDatabase().close();
-        verify(connection);
+    @Test
+    public void defaultsWorkWithoutAConnection() {
+        database.getDatabaseProductName();
+        database.getDefaultCatalogName();
+        database.getDefaultSchemaName();
+        database.getDefaultPort();
     }
-
     @Test
     public void isCorrectDatabaseImplementation() throws Exception {
         assertTrue(getDatabase().isCorrectDatabaseImplementation(getMockConnection()));
@@ -95,13 +78,17 @@ public abstract class AbstractDatabaseTest {
     @Test
     public void escapeTableName_noSchema() {
         Database database = getDatabase();
-        assertEquals("tableName", database.escapeTableName(null, "tableName"));
+        assertEquals("tableName", database.escapeTableName(null, null, "tableName"));
     }
 
     @Test
     public void escapeTableName_withSchema() {
         Database database = getDatabase();
-        assertEquals("schemaName.tableName", database.escapeTableName("schemaName", "tableName"));
+        if (database.supportsCatalogInObjectName(Table.class)) {
+            assertEquals("catalogName.schemaName.tableName", database.escapeTableName("catalogName", "schemaName", "tableName"));
+        } else {
+            assertEquals("schemaName.tableName", database.escapeTableName("catalogName", "schemaName", "tableName"));
+        }
     }
 
 //    @Test

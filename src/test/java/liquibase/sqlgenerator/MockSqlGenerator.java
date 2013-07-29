@@ -37,7 +37,11 @@ public class MockSqlGenerator implements SqlGenerator {
         return supports;
     }
 
-    public boolean requiresUpdatedDatabaseMetadata(Database database) {
+    public boolean generateStatementsIsVolatile(Database database) {
+        return false;
+    }
+
+    public boolean generateRollbackStatementsIsVolatile(Database database) {
         return false;
     }
 
@@ -50,7 +54,7 @@ public class MockSqlGenerator implements SqlGenerator {
     public Warnings warn(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         return new Warnings();
     }
-    
+
     public ValidationErrors validate(SqlStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors validationErrors = sqlGeneratorChain.validate(statement, database);
         validationErrors.addAll(errors);

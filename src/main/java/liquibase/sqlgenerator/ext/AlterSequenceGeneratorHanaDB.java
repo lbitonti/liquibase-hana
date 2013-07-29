@@ -32,7 +32,7 @@ public class AlterSequenceGeneratorHanaDB extends AlterSequenceGenerator {
     public Sql[] generateSql(AlterSequenceStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("ALTER SEQUENCE ");
-        buffer.append(database.escapeSequenceName(statement.getSchemaName(), statement.getSequenceName()));
+        buffer.append(database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName()));
 
         if (statement.getIncrementBy() != null) {
             buffer.append(" INCREMENT BY ").append(statement.getIncrementBy());
@@ -47,8 +47,11 @@ public class AlterSequenceGeneratorHanaDB extends AlterSequenceGenerator {
             buffer.append(" MAXVALUE ").append(statement.getMaxValue());
         }
 
+//        return new Sql[]{
+//                new UnparsedSql(buffer.toString())
+//        };
         return new Sql[]{
-                new UnparsedSql(buffer.toString())
+                new UnparsedSql(buffer.toString(), getAffectedSequence(statement))
         };
     }
 

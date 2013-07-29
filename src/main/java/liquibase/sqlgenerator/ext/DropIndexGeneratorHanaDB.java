@@ -1,20 +1,13 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MySQLDatabase;
-import liquibase.database.core.OracleDatabase;
-import liquibase.database.core.PostgresDatabase;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.database.structure.Index;
-import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.DropIndexGenerator;
-import liquibase.statement.core.CreateIndexStatement;
 import liquibase.statement.core.DropIndexStatement;
+import liquibase.structure.core.Index;
 import liquibase.util.StringUtils;
 
 import java.util.List;
@@ -44,6 +37,11 @@ public class DropIndexGeneratorHanaDB extends DropIndexGenerator {
 
         String schemaName = statement.getTableSchemaName();
         
-        return new Sql[] {new UnparsedSql("DROP INDEX " + database.escapeIndexName(schemaName, statement.getIndexName())) };
+        return new Sql[] {
+                new UnparsedSql(
+                        "DROP INDEX " + database.escapeIndexName(statement.getTableCatalogName(), schemaName, statement.getIndexName()),
+                        getAffectedIndex(statement)
+                )
+        };
     }
 }

@@ -1,13 +1,11 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.*;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.RenameColumnGenerator;
 import liquibase.statement.core.RenameColumnStatement;
 
@@ -32,12 +30,12 @@ public class RenameColumnGeneratorHanaDB extends RenameColumnGenerator {
     public Sql[] generateSql(RenameColumnStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         String sql;
 
-        sql = "RENAME COLUMN " + database.escapeTableName(statement.getSchemaName(), statement.getTableName()) +
-                "." + database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getOldColumnName()) +
-                " TO " + database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getNewColumnName());
+        sql = "RENAME COLUMN " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+                "." + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getOldColumnName()) +
+                " TO " + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getNewColumnName());
 
         return new Sql[] {
-                new UnparsedSql(sql)
+                new UnparsedSql(sql, getAffectedOldColumn(statement), getAffectedNewColumn(statement))
         };
     }
 }

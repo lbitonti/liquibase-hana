@@ -24,8 +24,10 @@ public class DropColumnGeneratorHanaDB extends DropColumnGenerator {
 
     public Sql[] generateSql(DropColumnStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         return new Sql[] { new UnparsedSql("ALTER TABLE " +
-                database.escapeTableName(statement.getSchemaName(), statement.getTableName()) + " DROP (" +
-                database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) + ")")
+                database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+                " DROP (" +
+                database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
+                ")", getAffectedColumn(statement))
         };
     }
 
