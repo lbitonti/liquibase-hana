@@ -1,4 +1,4 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.database.Database;
 import liquibase.database.core.*;
@@ -6,17 +6,17 @@ import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.datatype.core.BlobType;
+import liquibase.datatype.core.UUIDType;
+import liquibase.exception.DatabaseException;
 
-
-@DataTypeInfo(name="blob", aliases = {"longblob", "longvarbinary", "java.sql.Types.BLOB", "java.sql.Types.LONGBLOB", "java.sql.Types.LONGVARBINARY", "java.sql.Types.VARBINARY", "varbinary"},
+@DataTypeInfo(name="uuid", aliases = {"uniqueidentifier"},
         minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
-public class BlobTypeHanaDB extends BlobType {
+public class UUIDTypeHanaDB extends UUIDType {
 
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
         if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("BLOB");
+            return new DatabaseDataType("VARCHAR", 36);
         }
         return super.toDatabaseDataType(database);
     }

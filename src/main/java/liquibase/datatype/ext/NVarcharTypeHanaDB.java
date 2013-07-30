@@ -1,4 +1,4 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.database.Database;
 import liquibase.database.core.HsqlDatabase;

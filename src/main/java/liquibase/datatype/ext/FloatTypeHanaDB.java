@@ -1,21 +1,20 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.datatype.core.VarcharType;
+import liquibase.datatype.core.FloatType;
 
-
-@DataTypeInfo(name="varchar", aliases = {"java.sql.Types.VARCHAR", "java.lang.String", "varchar2"},
-        minParameters = 0, maxParameters = 1, priority = LiquibaseDataType.PRIORITY_DATABASE)
-public class VarcharTypeHanaDB extends VarcharType {
+@DataTypeInfo(name="float", aliases = {"java.sql.Types.FLOAT","java.lang.Float"},
+        minParameters = 0, maxParameters = 2, priority = LiquibaseDataType.PRIORITY_DATABASE)
+public class FloatTypeHanaDB extends FloatType {
 
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
         if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("VARCHAR", getParameters());
+            return new DatabaseDataType("FLOAT");
         }
         return super.toDatabaseDataType(database);
     }
