@@ -2,6 +2,8 @@ package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
+import liquibase.datatype.DataTypeFactory;
+import liquibase.datatype.DatabaseDataType;
 import liquibase.logging.LogFactory;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -32,8 +34,10 @@ public class CreateTableGeneratorHanaDB extends CreateTableGenerator {
         while (columnIterator.hasNext()) {
             String column = columnIterator.next();
 
+            DatabaseDataType columnType = statement.getColumnTypes().get(column).toDatabaseDataType(database);
             buffer.append(database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), column));
-            buffer.append(" ").append(statement.getColumnTypes().get(column));
+
+            buffer.append(" ").append(columnType);
 
             AutoIncrementConstraint autoIncrementConstraint = null;
 
