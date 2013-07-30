@@ -1,4 +1,4 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.datatype.core.UnknownType;
 

@@ -1,4 +1,4 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.database.Database;
 import liquibase.database.core.*;
@@ -6,16 +6,16 @@ import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.datatype.core.NumberType;
+import liquibase.datatype.core.DoubleType;
 
-@DataTypeInfo(name="number", aliases = {"numeric", "java.sql.Types.NUMERIC"},
-        minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
-public class NumberTypeHanaDB extends NumberType {
+@DataTypeInfo(name="double", aliases = {"java.sql.Types.DOUBLE", "java.lang.Double"},
+        minParameters = 0, maxParameters = 2, priority = LiquibaseDataType.PRIORITY_DATABASE)
+public class DoubleTypeHanaDB extends DoubleType {
 
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
         if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("DECIMAL", getParameters());
+            return new DatabaseDataType("DOUBLE");
         }
         return super.toDatabaseDataType(database);
     }

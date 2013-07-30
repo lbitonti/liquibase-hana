@@ -1,26 +1,27 @@
-package liquibase.database.datatype.ext.hanadb;
+package liquibase.datatype.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.*;
+import liquibase.database.core.DerbyDatabase;
+import liquibase.database.core.MSSQLDatabase;
+import liquibase.database.core.OracleDatabase;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeInfo;
 import liquibase.datatype.DatabaseDataType;
 import liquibase.datatype.LiquibaseDataType;
-import liquibase.datatype.core.BigIntType;
+import liquibase.datatype.core.TinyIntType;
 
-
-@DataTypeInfo(name="bigint", aliases = {"java.sql.Types.BIGINT", "java.math.BigInteger", "java.lang.Long", "integer8", "bigserial"},
+@DataTypeInfo(name="tinyint", aliases = "java.sql.Types.TINYINT",
         minParameters = 0, maxParameters = 1, priority = LiquibaseDataType.PRIORITY_DATABASE)
-public class BigIntTypeHanaDB extends BigIntType {
+public class TinyIntTypeHanaDB extends TinyIntType {
+
 
     private boolean autoIncrement;
 
-    @Override
     public boolean isAutoIncrement() {
         return autoIncrement;
     }
 
-    @Override
     public void setAutoIncrement(boolean autoIncrement) {
         this.autoIncrement = autoIncrement;
     }
@@ -28,7 +29,7 @@ public class BigIntTypeHanaDB extends BigIntType {
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
         if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("BIGINT");
+            return new DatabaseDataType("TINYINT");
         }
         return super.toDatabaseDataType(database);
     }
