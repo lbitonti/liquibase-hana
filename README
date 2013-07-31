@@ -1,0 +1,43 @@
+Liquibase extension that provides support for  SAP Hana DB.
+
+Initial Hana DB support is currently implemented in the 2.0.x and 3.0.x branches. The master branch at the moment follows 3.0.x.
+
+The original Liquibase distribution is available at: https://github.com/liquibase/liquibase/
+
+The official liquibase site is: http://www.liquibase.org
+
+Released under the Apache 2.0 License with no guarantee whatsoever.
+
+
+The 2.0.x branch is built against Liquibase 2.0.5, the 3.0.x branch against version 3.0.2 of Liquibase.
+
+This is work in progress, currently used in a project I am working on. Branch 2.0.x has definitely undergone more testing.
+If you give it a go, I'd like to know how it worked for you.
+
+The current generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
+
+AddAutoIncrementGenerator
+AddColumnGenerator
+AddDefaultValueGenerator
+AddForeignKeyConstraintGenerator
+AddPrimaryKeyGenerator
+AddUniqueConstraintGenerator
+AlterSequenceGenerator
+CreateIndexGenerator
+CreateSequenceGenerator
+CreateTableGenerator
+CreateViewGenerator
+DropColumnGenerator
+DropForeignKeyConstraintGenerator
+DropIndexGenerator
+DropPrimaryKeyGenerator
+DropSequenceGenerator
+DropTableGenerator
+DropUniqueConstraintGenerator
+DropViewGenerator
+GetViewDefinitionGenerator
+RenameColumnGenerator
+RenameTableGenerator
+RenameViewGenerator
+SetNullableGenerator
+
