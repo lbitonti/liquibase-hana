@@ -9,6 +9,7 @@ import liquibase.sqlgenerator.AbstractSqlGeneratorHanaDBTest;
 import liquibase.sqlgenerator.MockSqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
+import liquibase.statement.UniqueConstraint;
 import liquibase.statement.core.CreateTableStatement;
 import org.junit.Test;
 
@@ -93,6 +94,45 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         assertEquals("CREATE TABLE \"table_name\" (\"id\" VARCHAR(150) DEFAULT null, \"author\" VARCHAR(150) DEFAULT null, " +
                 "\"dateExecuted\" TIMESTAMP DEFAULT null, \"description\" VARCHAR(255), \"revision\" INTEGER)",
                 generatedSql[0].toSql());
+    }
+
+
+    @Test
+    public void testWithColumnUniqueConstraint() {
+        Database database = new HanaDBDatabase();
+        CreateTableStatement statement = new CreateTableStatement(null, null, "TABLE_NAME");
+
+        UniqueConstraint uniqueConstraint = new UniqueConstraint();
+        uniqueConstraint.setConstraintName("COLUMN1_UNIQUE");
+        uniqueConstraint.addColumns("COLUMN1_NAME");
+
+        statement.addColumn("COLUMN1_NAME",
+                DataTypeFactory.getInstance().fromDescription("int"));
+
+        statement.addColumnConstraint(uniqueConstraint);
+
+        assertEquals("CREATE TABLE \"TABLE_NAME\" (\"COLUMN1_NAME\" INTEGER, UNIQUE (\"COLUMN1_NAME\"))",
+                this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
+    }
+
+    @Test
+    public void testWith2ColumnsUniqueConstraint() {
+        Database database = new HanaDBDatabase();
+        CreateTableStatement statement = new CreateTableStatement(null, null, "TABLE_NAME");
+
+        UniqueConstraint uniqueConstraint = new UniqueConstraint();
+        uniqueConstraint.setConstraintName("COLUMN1_UNIQUE");
+        uniqueConstraint.addColumns("COLUMN1_NAME", "COLUMN2_NAME");
+
+        statement.addColumn("COLUMN1_NAME",
+                DataTypeFactory.getInstance().fromDescription("int"));
+        statement.addColumn("COLUMN2_NAME",
+                DataTypeFactory.getInstance().fromDescription("varchar(100)"));
+
+        statement.addColumnConstraint(uniqueConstraint);
+
+        assertEquals("CREATE TABLE \"TABLE_NAME\" (\"COLUMN1_NAME\" INTEGER, \"COLUMN2_NAME\" VARCHAR(100), UNIQUE (\"COLUMN1_NAME\", \"COLUMN2_NAME\"))",
+                this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
     }
 
 }
