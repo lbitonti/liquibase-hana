@@ -54,19 +54,16 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
 
         if (!statement.isNullable()) {
             alterTable += " NOT NULL";
-        } else {
-            if (database instanceof SybaseDatabase || database instanceof SybaseASADatabase) {
-                alterTable += " NULL";
-            }
         }
 
         if (statement.isPrimaryKey()) {
             alterTable += " PRIMARY KEY";
         }
 
-        if (statement.isUnique()) {
-            alterTable += " UNIQUE ";
-        }
+        // "ALTER TABLE ADD COLUMN ..." does not support unique constraints in Hana
+//        if (statement.isUnique()) {
+//            alterTable += " UNIQUE ";
+//        }
 
         alterTable += getDefaultClause(statement, database);
 

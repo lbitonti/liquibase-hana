@@ -9,7 +9,9 @@ import liquibase.sqlgenerator.MockSqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.AutoIncrementConstraint;
+import liquibase.statement.ColumnConstraint;
 import liquibase.statement.PrimaryKeyConstraint;
+import liquibase.statement.UniqueConstraint;
 import liquibase.statement.core.AddColumnStatement;
 import org.junit.Test;
 
@@ -88,6 +90,26 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         assertTrue(generatedSql.length == 1);
         assertEquals("ALTER TABLE \"table_name\" ADD (\"column_name\" SMALLINT DEFAULT 0)", generatedSql[0].toSql());
 
+    }
+
+    // "ALTER TABLE ADD COLUMN ..." does not support unique constraints in Hana
+    @Test
+    public void testAddBooleanColumnWithDefaultValueAndUniqueConstraint() throws Exception {
+        super.isValid();
+
+        UniqueConstraint uniqueConstraint = new UniqueConstraint();
+        uniqueConstraint.setConstraintName("COLUMN1_UNIQUE");
+        uniqueConstraint.addColumns("column_name");
+        AddColumnStatement addDefaultColumn =
+                new AddColumnStatement(null, "table_name", "column_name", "BOOLEAN", new Boolean(false), uniqueConstraint);
+
+        Database hanadb = new HanaDBDatabase();
+        SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
+
+        assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());
+        Sql[] generatedSql = generatorUnderTest.generateSql(addDefaultColumn, hanadb, sqlGeneratorChain);
+        assertTrue(generatedSql.length == 1);
+        assertEquals("ALTER TABLE \"table_name\" ADD (\"column_name\" SMALLINT DEFAULT 0)", generatedSql[0].toSql());
     }
 
 }
