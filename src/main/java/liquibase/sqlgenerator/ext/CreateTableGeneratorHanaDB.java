@@ -82,9 +82,32 @@ public class CreateTableGeneratorHanaDB extends CreateTableGenerator {
             buffer.append(",");
         }
 
+//        for (ForeignKeyConstraint fkConstraint : statement.getForeignKeyConstraints()) {
+//            buffer.append(" CONSTRAINT ");
+//            buffer.append(database.escapeConstraintName(fkConstraint.getForeignKeyName()));
+//            String referencesString = fkConstraint.getReferences();
+//            if (!referencesString.contains(".") && database.getDefaultSchemaName() != null) {
+//                referencesString = database.getDefaultSchemaName()+"."+referencesString;
+//            }
+//            buffer.append(" FOREIGN KEY (")
+//                    .append(database.escapeColumnName(statement.getSchemaName(), statement.getTableName(), fkConstraint.getColumn()))
+//                    .append(") REFERENCES ")
+//                    .append(referencesString);
+//
+//            if (fkConstraint.isDeleteCascade()) {
+//                buffer.append(" ON DELETE CASCADE");
+//            }
+//
+//            if (fkConstraint.isInitiallyDeferred()) {
+//                buffer.append(" INITIALLY DEFERRED");
+//            }
+//            if (fkConstraint.isDeferrable()) {
+//                buffer.append(" DEFERRABLE");
+//            }
+//            buffer.append(",");
+//        }
+
         for (UniqueConstraint uniqueConstraint : statement.getUniqueConstraints()) {
-            buffer.append(" CONSTRAINT ");
-            buffer.append(database.escapeConstraintName(uniqueConstraint.getConstraintName()));
             buffer.append(" UNIQUE (");
             buffer.append(database.escapeColumnNameList(StringUtils.join(uniqueConstraint.getColumns(), ", ")));
             buffer.append(")");
