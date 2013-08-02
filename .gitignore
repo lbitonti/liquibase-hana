@@ -4,3 +4,5 @@ target
 .project
 .settings
 *nb-configuration.xml
+.classpath
+liquibase.integrationtest.local.properties
