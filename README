@@ -16,11 +16,8 @@ If you give it a go, I'd like to know how it worked for you.
 
 The following generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
 
-AddAutoIncrementGenerator
 AddColumnGenerator
 AddDefaultValueGenerator
-AddPrimaryKeyGenerator
-AddUniqueConstraintGenerator
 AlterSequenceGenerator
 CreateIndexGenerator
 CreateSequenceGenerator
@@ -36,7 +33,6 @@ DropViewGenerator
 GetViewDefinitionGenerator
 RenameColumnGenerator
 RenameTableGenerator
-RenameViewGenerator
 SetNullableGenerator
 
 Foreign Keys related generators are not implemented yet. They are still available, as all the other features through sql changesets.
