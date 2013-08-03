@@ -13,6 +13,7 @@ import liquibase.statement.core.SelectSequencesStatement;
 
 
 public class SelectSequencesGeneratorHanaDB extends AbstractSqlGenerator<SelectSequencesStatement> {
+
     @Override
     public int getPriority() {
         return PRIORITY_DATABASE;
@@ -30,7 +31,8 @@ public class SelectSequencesGeneratorHanaDB extends AbstractSqlGenerator<SelectS
     public Sql[] generateSql(SelectSequencesStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         try {
             return new Sql[] {
-                    new UnparsedSql("SELECT SEQUENCE_NAME FROM SEQUENCES WHERE SCHEMA_NAME = '" + database.convertRequestedSchemaToSchema(statement.getSchemaName()) + "'")
+                    new UnparsedSql("SELECT SEQUENCE_NAME FROM SEQUENCES WHERE upper(SCHEMA_NAME) = '" +
+                            database.convertRequestedSchemaToSchema(statement.getSchemaName()).toUpperCase() + "'")
             };
         } catch (DatabaseException e) {
             throw new UnexpectedLiquibaseException(e);

@@ -13,6 +13,12 @@ import liquibase.statement.core.AddUniqueConstraintStatement;
 public class AddUniqueConstraintGeneratorHanaDB extends AddUniqueConstraintGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+
+    @Override
     public boolean supports(AddUniqueConstraintStatement statement, Database database) {
 //        return database instanceof HanaDBDatabase;
         return !(database instanceof HanaDBDatabase);

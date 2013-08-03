@@ -13,6 +13,11 @@ import liquibase.statement.core.AlterSequenceStatement;
 public class AlterSequenceGeneratorHanaDB extends AlterSequenceGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(AlterSequenceStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

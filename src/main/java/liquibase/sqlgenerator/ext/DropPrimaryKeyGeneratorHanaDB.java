@@ -15,6 +15,11 @@ import liquibase.statement.core.DropPrimaryKeyStatement;
 public class DropPrimaryKeyGeneratorHanaDB extends DropPrimaryKeyGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropPrimaryKeyStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

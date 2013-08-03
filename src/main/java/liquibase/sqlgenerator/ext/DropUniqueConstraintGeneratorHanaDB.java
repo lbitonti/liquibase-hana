@@ -14,14 +14,22 @@ import liquibase.statement.core.DropUniqueConstraintStatement;
 public class DropUniqueConstraintGeneratorHanaDB extends DropUniqueConstraintGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropUniqueConstraintStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
 
     @Override
     public Sql[] generateSql(DropUniqueConstraintStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String sql;
-            sql = "DROP INDEX " + database.escapeConstraintName(statement.getConstraintName());
+//        String sql;
+//            sql = "DROP INDEX " + database.escapeConstraintName(statement.getConstraintName());
+        String sql =
+            "ALTER TABLE " + database.escapeTableName(statement.getSchemaName(), statement.getTableName()) +
+            " DROP CONSTRAINT " + database.escapeConstraintName(statement.getConstraintName());
 
         return new Sql[] {
                 new UnparsedSql(sql)

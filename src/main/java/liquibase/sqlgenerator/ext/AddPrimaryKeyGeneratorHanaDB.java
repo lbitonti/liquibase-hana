@@ -17,6 +17,11 @@ import liquibase.util.StringUtils;
 public class AddPrimaryKeyGeneratorHanaDB extends AddPrimaryKeyGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(AddPrimaryKeyStatement statement, Database database) {
 //        return database instanceof HanaDBDatabase;
         return !(database instanceof HanaDBDatabase);

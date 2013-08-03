@@ -37,4 +37,14 @@ public class CreateViewGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTes
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
     }
 
+    @Test
+    public void testWithBasicSelectAndSchema() {
+        Database database = new HanaDBDatabase();
+        CreateViewStatement statement = new CreateViewStatement("SCHEMA_NAME", "view_name", "SELECT * FROM A", false);
+
+        assertEquals("CREATE VIEW \"SCHEMA_NAME\".\"view_name\" AS SELECT * FROM A",
+                this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
+    }
+
+
 }

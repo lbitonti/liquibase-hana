@@ -1,26 +1,22 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.*;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.database.typeconversion.TypeConverter;
 import liquibase.database.typeconversion.TypeConverterFactory;
-import liquibase.exception.DatabaseException;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.SqlGeneratorFactory;
-import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.SetNullableGenerator;
-import liquibase.statement.core.ReorganizeTableStatement;
 import liquibase.statement.core.SetNullableStatement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
+
+    @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
 
     @Override
     public boolean supports(SetNullableStatement statement, Database database) {

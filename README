@@ -14,12 +14,11 @@ The 2.0.x branch is built against Liquibase 2.0.5, the 3.0.x branch against vers
 This is work in progress, currently used in a project I am working on. Branch 2.0.x has definitely undergone more testing.
 If you give it a go, I'd like to know how it worked for you.
 
-The current generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
+The following generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
 
 AddAutoIncrementGenerator
 AddColumnGenerator
 AddDefaultValueGenerator
-AddForeignKeyConstraintGenerator
 AddPrimaryKeyGenerator
 AddUniqueConstraintGenerator
 AlterSequenceGenerator
@@ -28,7 +27,6 @@ CreateSequenceGenerator
 CreateTableGenerator
 CreateViewGenerator
 DropColumnGenerator
-DropForeignKeyConstraintGenerator
 DropIndexGenerator
 DropPrimaryKeyGenerator
 DropSequenceGenerator
@@ -40,4 +38,6 @@ RenameColumnGenerator
 RenameTableGenerator
 RenameViewGenerator
 SetNullableGenerator
+
+Foreign Keys related generators are not implemented yet. They are still available, as all the other features through sql changesets.
 

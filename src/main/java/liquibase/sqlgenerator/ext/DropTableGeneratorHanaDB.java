@@ -17,6 +17,11 @@ import liquibase.statement.core.DropTableStatement;
 public class DropTableGeneratorHanaDB extends DropTableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropTableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
@@ -27,6 +32,8 @@ public class DropTableGeneratorHanaDB extends DropTableGenerator {
         if (statement.isCascadeConstraints()) {
             buffer.append(" CASCADE");
         }
+        // NOTE: Liquibase 2.0.x does not support RESTRICT options (they are supported in Hana).
+        // If CASCADE is not specified dependent objects will be invalidated but not dropped.
 //        else {
 //            buffer.append(" RESTRICT");
 //        }

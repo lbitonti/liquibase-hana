@@ -1,17 +1,20 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.*;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
-import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 import liquibase.sqlgenerator.core.RenameColumnGenerator;
 import liquibase.statement.core.RenameColumnStatement;
 
 public class RenameColumnGeneratorHanaDB extends RenameColumnGenerator {
+
+    @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
 
     @Override
     public boolean supports(RenameColumnStatement statement, Database database) {
