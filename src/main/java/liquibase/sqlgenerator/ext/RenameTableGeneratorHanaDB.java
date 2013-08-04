@@ -30,7 +30,8 @@ public class RenameTableGeneratorHanaDB extends RenameTableGenerator {
         String sql;
 
         sql = "RENAME TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getOldTableName()) +
-                " TO " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getNewTableName());
+//                " TO " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getNewTableName());
+                " TO " + database.escapeTableName(null, null, statement.getNewTableName());
 
         return new Sql[] {
                 new UnparsedSql(sql, getAffectedOldTable(statement), getAffectedNewTable(statement))

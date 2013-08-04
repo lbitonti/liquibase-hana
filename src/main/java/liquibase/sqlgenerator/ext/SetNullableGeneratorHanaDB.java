@@ -2,6 +2,7 @@ package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
+import liquibase.datatype.DataTypeFactory;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -41,7 +42,7 @@ public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
 
         sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
                 " ALTER (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                " " + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
+                " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnDataType()).toDatabaseDataType(database) +
                 nullableString + ")";
 
         return new Sql[] {

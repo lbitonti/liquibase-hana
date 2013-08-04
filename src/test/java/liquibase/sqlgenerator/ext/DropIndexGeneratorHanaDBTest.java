@@ -24,7 +24,7 @@ public class DropIndexGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
 	@Override
 	protected DropIndexStatement createSampleSqlStatement() {
         Database database = new HanaDBDatabase();
-        DropIndexStatement dropIndexStatement = new DropIndexStatement(null, "index_name", null, "table_name", null);
+        DropIndexStatement dropIndexStatement = new DropIndexStatement("index_name", null, null, "table_name", null);
         return dropIndexStatement;
     }
 
@@ -32,7 +32,7 @@ public class DropIndexGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
     @Test
     public void testDropIndexNoSchema() {
         Database database = new HanaDBDatabase();
-        DropIndexStatement statement = new DropIndexStatement(null, "index_name", null, "table_name", null);
+        DropIndexStatement statement = new DropIndexStatement("index_name", null, null, "table_name", null);
 
         assertEquals("DROP INDEX \"index_name\"",
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
@@ -41,7 +41,7 @@ public class DropIndexGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
     @Test
     public void testDropIndexWithSchema() {
         Database database = new HanaDBDatabase();
-        DropIndexStatement statement = new DropIndexStatement(null, "index_name", "schema_name", "table_name", null);
+        DropIndexStatement statement = new DropIndexStatement("index_name", null, "schema_name", "table_name", null);
 
         assertEquals("DROP INDEX \"schema_name\".\"index_name\"",
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
