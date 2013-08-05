@@ -1,6 +1,10 @@
 package liquibase.database.ext;
 
 
+import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
@@ -11,10 +15,6 @@ import liquibase.logging.LogFactory;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.View;
-
-import java.util.HashSet;
-import java.util.Set;
-
 
 public class HanaDBDatabase extends AbstractJdbcDatabase {
 
@@ -301,7 +301,7 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
     }
 
     public Integer getDefaultPort() {
-        return 3415;
+        return 30015;
     }
 
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
@@ -375,5 +375,10 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
 //    public String escapeDatabaseObject(String objectName) {
 //        return "\"" + objectName + "\"";
 //    }
+
+	@Override
+	public boolean supportsCatalogs() {
+		return false;
+	}
 
 }
