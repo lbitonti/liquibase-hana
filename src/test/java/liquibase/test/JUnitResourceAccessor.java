@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,19 +16,20 @@ import java.util.Set;
 public class JUnitResourceAccessor implements ResourceAccessor {
     private URLClassLoader classLoader;
 
-//    public JUnitResourceAccessor() throws Exception {
-//        File srcDir = new File(TestContextHanaDB.getInstance().findCoreProjectRoot(), "src");
-//        File integrationClassesDir = new File(TestContextHanaDB.getInstance().findIntegrationTestProjectRoot(), "target/classes");
-//        File integrationTestClassesDir = new File(TestContextHanaDB.getInstance().findIntegrationTestProjectRoot(), "target/test-classes");
-//         classLoader = new URLClassLoader(new URL[]{
-//                //integrationClassesDir.toURL(),
-//                 //integrationTestClassesDir.toURL(),
-//                //new File(srcDir, "test/java").toURL(),
-//                 new File(TestContextHanaDB.getInstance().findIntegrationTestProjectRoot(), "src/test/resources/packaged-changelog.jar").toURL(),
-//                new File(System.getProperty("java.io.tmpdir")).toURL(),
-//        });
-//
-//    }
+    public JUnitResourceAccessor() throws Exception {
+//        File srcDir = new File(TestContext.getInstance().findCoreProjectRoot(), "src");
+//        File integrationClassesDir = new File(TestContext.getInstance().findIntegrationTestProjectRoot(), "target/classes");
+//        File integrationTestClassesDir = new File(TestContext.getInstance().findIntegrationTestProjectRoot(), "target/test-classes");
+        classLoader = new URLClassLoader(new URL[]{
+//                integrationClassesDir.toURL(),
+//                integrationTestClassesDir.toURL(),
+//                new File(srcDir, "test/java").toURL(),
+                new File(TestContext.getInstance().findIntegrationTestProjectRoot(), 
+                        "src/test/resources/packaged-changelog.jar").toURI().toURL(),
+                new File(System.getProperty("java.io.tmpdir")).toURI().toURL(),
+        });
+
+    }
 
     public java.util.Set<java.io.InputStream> getResourcesAsStream(String file) throws IOException {
         Set<InputStream> inputStreamSet = new HashSet<InputStream>();
