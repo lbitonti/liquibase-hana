@@ -5,7 +5,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
     <preConditions>
-            <dbms type="hana"/>
+            <dbms type="hanadb"/>
             <runningAs username="liquibase"/>
     </preConditions>
 
@@ -293,11 +293,12 @@
         <modifyDataType tableName="address" columnName="postalcode" newDataType="varchar(20)"/>
     </changeSet>    
 
+<!--   
     <include file="changelogs/hana/complete/included.changelog.xml"/>
 
     <include file="changelogs/hana/complete/renamed.changelog.xml"/>
 
-    <include file="changelogs/common/common.tests.changelog.xml" />
+	<include file="changelogs/common/common.tests.changelog.xml" />
 
     <include file="changelogs/common/schema.tests.changelog.xml" />
 
@@ -314,5 +315,6 @@
     <changeSet id="58" author="nvoxland">
         <customChange class="liquibase.change.custom.ExampleCustomTaskChange" helloTo="world"/>
     </changeSet>
-
+ -->
+ 
 </databaseChangeLog>
