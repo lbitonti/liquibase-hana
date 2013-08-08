@@ -3,6 +3,8 @@ package liquibase.database.ext;
 
 import java.sql.ResultSet;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import liquibase.database.AbstractJdbcDatabase;
@@ -10,6 +12,7 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
 import liquibase.database.OfflineConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.logging.LogFactory;
 import liquibase.statement.core.RawSqlStatement;
@@ -27,7 +30,8 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
         super.quotingStartCharacter ="\"";
         super.quotingEndCharacter="\"";
         setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
-
+        unquotedObjectsAreUppercased = true;
+        
         systemTablesAndViews.add("---");
 
         systemTablesAndViews.add("AUDIT_POLICIES");
@@ -381,4 +385,28 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
 		return false;
 	}
 
+	public String getColumnDataTypeName(String catalogName, String schemaName,
+			String tableName, String columnName) {
+		final String dataTypeName = "DATA_TYPE_NAME";
+		final String length = "LENGTH";
+		String sql = "select " + dataTypeName + ", " + length + " from "
+				+ escapeTableName(catalogName, "SYS", "TABLE_COLUMNS")
+				+ " where schema_name = '" + schemaName
+				+ "' and table_name = '" + correctObjectName(tableName, null)
+				+ "' and column_name = '" + correctObjectName(columnName, null)
+				+ "'";
+		try {
+			List<Map<String, ?>> queryForList = ExecutorService.getInstance()
+					.getExecutor(this)
+					.queryForList(new RawSqlStatement(sql, ""));
+			if (queryForList.size() == 1) {
+				final Map<String, ?> item = queryForList.get(0);
+				return (String) item.get(dataTypeName) + "("
+						+ (String) (item.get(length) + ")");
+			}
+		} catch (DatabaseException e) {
+			throw new UnexpectedLiquibaseException(e);
+		}
+		return null;
+	}
 }

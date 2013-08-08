@@ -97,6 +97,7 @@
     <changeSet id="8" author="bjohnson">
         <dropNotNullConstraint tableName="employee" columnName="name"/>
     </changeSet>
+<!-- 
     <changeSet id="8.1" author="bjohnson">
         <comment>I guess name needs to be not-null</comment>
         <addNotNullConstraint tableName='employee' columnName="name" defaultNullValue="UNKNOWN"/>
@@ -104,6 +105,7 @@
     <changeSet id="9" author="nvoxland">
         <renameTable oldTableName="employee" newTableName="company"/>
     </changeSet>
+    
     <changeSet id="10" author="nvoxland">
         <createTable tableName="testtable">
             <column name="id" type="int">
@@ -113,9 +115,11 @@
                 <constraints nullable="false"/>
             </column>
             <column name="person_id" type="int">
-		    <!-- not supported (see changeSet 7a) 
+ -->
+ 		    <!-- not supported (see changeSet 7a) 
 			 <constraints nullable="false" foreignKeyName="fk_test_person" references="person(id)"/> 
 			 -->
+ <!-- 
             </column>
         </createTable>
     </changeSet>
@@ -152,11 +156,13 @@
     <changeSet id="16" author="nvoxland">
         <createSequence sequenceName="seq_test" startValue="1000" incrementBy="2" minValue="50" maxValue="100000" ordered="true"/>
     </changeSet>
-    <!--  not supported 
+ -->
+     <!--  not supported 
     <changeSet id="17" author="nvoxland">
         <alterSequence sequenceName="seq_test" incrementBy="2" minValue="50" maxValue="100000" ordered="true"/>
     </changeSet>
      -->
+<!-- 
     <changeSet id="18" author="nvoxland">
         <dropSequence sequenceName="seq_test"/>
     </changeSet>
@@ -199,8 +205,9 @@
             <column name="employer_id" type="int"/>
         </addColumn>
     </changeSet>
-
+ -->
 	<!--  not supported   deferrable="true" initiallyDeferred="true"  -->
+<!-- 
     <changeSet id="25" author="nvoxland">
         <addForeignKeyConstraint
                 baseTableName="person" baseColumnNames="employer_id"
@@ -293,7 +300,6 @@
         <modifyDataType tableName="address" columnName="postalcode" newDataType="varchar(20)"/>
     </changeSet>    
 
-<!--   
     <include file="changelogs/hana/complete/included.changelog.xml"/>
 
     <include file="changelogs/hana/complete/renamed.changelog.xml"/>
