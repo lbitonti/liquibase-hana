@@ -367,7 +367,7 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
 			return null;
 		}
 		try {
-			return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from dummy"), String.class);
+			return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from sys.dummy"), String.class);
 		} catch (Exception e) {
 			LogFactory.getLogger().info("Error getting default schema", e);
 		}
