@@ -305,7 +305,7 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
     }
 
     public String getDefaultDriver(String url) {
-        if (url.startsWith("jdbc:sapdb")) {
+        if (url.startsWith("jdbc:sap:")) {
             return "com.sap.db.jdbc.Driver";
         }
         return null;
