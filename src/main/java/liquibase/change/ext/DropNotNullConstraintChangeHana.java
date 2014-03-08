@@ -19,17 +19,20 @@ public class DropNotNullConstraintChangeHana extends
 
 	@Override
 	public SqlStatement[] generateStatements(Database database) {
-    	if (getSchemaName() == null) {
-    		setSchemaName(database.getDefaultSchemaName());
+		// local variable introduced as superclass's schemaName is used for checksum calculation
+		// TODO: is this logic also needed for the inverse?
+		String schemaToUse = getSchemaName();
+    	if (schemaToUse == null) {
+    		schemaToUse = database.getDefaultSchemaName();
     	}
     	String columnDataTypeName = getColumnDataType();
-    	if (columnDataTypeName == null && getSchemaName() != null && database instanceof HanaDBDatabase) {
-    		columnDataTypeName = ((HanaDBDatabase) database).getColumnDataTypeName(getCatalogName(), getSchemaName(), getTableName(), getColumnName());
+    	if (columnDataTypeName == null && schemaToUse != null && database instanceof HanaDBDatabase) {
+    		columnDataTypeName = ((HanaDBDatabase) database).getColumnDataTypeName(getCatalogName(), schemaToUse, getTableName(), getColumnName());
 		}
     	
     	return new SqlStatement[] { new SetNullableStatement(
                 getCatalogName(),
-    			getSchemaName(),
+    			schemaToUse,
     			getTableName(), getColumnName(), columnDataTypeName, true) 
     	};
 
