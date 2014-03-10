@@ -13,6 +13,11 @@ import liquibase.statement.core.CreateSequenceStatement;
 public class CreateSequenceGeneratorHanaDB extends CreateSequenceGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(CreateSequenceStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

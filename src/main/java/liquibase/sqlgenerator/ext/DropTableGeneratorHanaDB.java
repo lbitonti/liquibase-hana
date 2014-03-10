@@ -17,6 +17,11 @@ import liquibase.statement.core.DropTableStatement;
 public class DropTableGeneratorHanaDB extends DropTableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropTableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

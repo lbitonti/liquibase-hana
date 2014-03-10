@@ -13,6 +13,11 @@ import liquibase.statement.core.RenameTableStatement;
 public class RenameTableGeneratorHanaDB extends RenameTableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(RenameTableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

@@ -12,6 +12,11 @@ import liquibase.statement.core.DropSequenceStatement;
 public class DropSequenceGeneratorHanaDB extends DropSequenceGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropSequenceStatement statement, Database database) {
         return database.supportsSequences();
     }

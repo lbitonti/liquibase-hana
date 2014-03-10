@@ -12,6 +12,11 @@ import liquibase.statement.core.DropViewStatement;
 public class DropViewGeneratorHanaDB extends DropViewGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropViewStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

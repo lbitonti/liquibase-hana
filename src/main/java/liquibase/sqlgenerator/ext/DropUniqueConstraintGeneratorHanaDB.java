@@ -11,6 +11,11 @@ import liquibase.statement.core.DropUniqueConstraintStatement;
 public class DropUniqueConstraintGeneratorHanaDB extends DropUniqueConstraintGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropUniqueConstraintStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }

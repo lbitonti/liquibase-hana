@@ -12,11 +12,16 @@ import liquibase.statement.core.SetNullableStatement;
 public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(SetNullableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
 
-	@Override
+    @Override
     public ValidationErrors validate(SetNullableStatement setNullableStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors validationErrors = new ValidationErrors();
 
@@ -39,8 +44,8 @@ public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
         }
 
         sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + 
-        		" ALTER (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) + 
-        		" " + statement.getColumnDataType() + nullableString + ")";
+                " ALTER (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) + 
+                " " + statement.getColumnDataType() + nullableString + ")";
 
         return new Sql[] {
                 new UnparsedSql(sql, getAffectedColumn(statement))
