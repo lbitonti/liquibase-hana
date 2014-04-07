@@ -361,52 +361,57 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
         return false;
     }
 
-	@Override
-	protected String getConnectionSchemaName() {
-		if (getConnection() == null || getConnection() instanceof OfflineConnection) {
-			return null;
-		}
-		try {
-			return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from sys.dummy"), String.class);
-		} catch (Exception e) {
-			LogFactory.getLogger().info("Error getting default schema", e);
-		}
-		return null;
-	}
+    @Override
+    protected String getConnectionSchemaName() {
+        if (getConnection() == null || getConnection() instanceof OfflineConnection) {
+            return null;
+        }
+        try {
+            return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from sys.dummy"), String.class);
+        } catch (Exception e) {
+            LogFactory.getLogger().info("Error getting default schema", e);
+        }
+        return null;
+    }
 
+
+    @Override
+    public boolean supportsDDLInTransaction() {
+        // see http://help.sap.com/saphelp_hanaplatform/helpdata/en/20/fdf9cb75191014b85aaa9dec841291/content.htm
+        return false;
+    }
 
 //    @Override
 //    public String escapeDatabaseObject(String objectName) {
 //        return "\"" + objectName + "\"";
 //    }
 
-	@Override
-	public boolean supportsCatalogs() {
-		return false;
-	}
+    @Override
+    public boolean supportsCatalogs() {
+        return false;
+    }
 
-	public String getColumnDataTypeName(String catalogName, String schemaName,
-			String tableName, String columnName) {
-		final String dataTypeName = "DATA_TYPE_NAME";
-		final String length = "LENGTH";
-		String sql = "select " + dataTypeName + ", " + length + " from "
-				+ escapeTableName(catalogName, "SYS", "TABLE_COLUMNS")
-				+ " where schema_name = '" + schemaName
-				+ "' and table_name = '" + correctObjectName(tableName, null)
-				+ "' and column_name = '" + correctObjectName(columnName, null)
-				+ "'";
-		try {
-			List<Map<String, ?>> queryForList = ExecutorService.getInstance()
-					.getExecutor(this)
-					.queryForList(new RawSqlStatement(sql, ""));
-			if (queryForList.size() == 1) {
-				final Map<String, ?> item = queryForList.get(0);
-				return (String) item.get(dataTypeName) + "("
-						+ (String) (item.get(length) + ")");
-			}
-		} catch (DatabaseException e) {
-			throw new UnexpectedLiquibaseException(e);
-		}
-		return null;
-	}
+    public String getColumnDataTypeName(String catalogName, String schemaName,
+            String tableName, String columnName) {
+        final String dataTypeName = "DATA_TYPE_NAME";
+        final String length = "LENGTH";
+        String sql = "select " + dataTypeName + ", " + length + " from "
+                + escapeTableName(catalogName, "SYS", "TABLE_COLUMNS")
+                + " where schema_name = '" + schemaName
+                + "' and table_name = '" + correctObjectName(tableName, null)
+                + "' and column_name = '" + correctObjectName(columnName, null)
+                + "'";
+        try {
+            List<Map<String, ?>> queryForList = ExecutorService.getInstance()
+                    .getExecutor(this)
+                    .queryForList(new RawSqlStatement(sql, ""));
+            if (queryForList.size() == 1) {
+                final Map<String, ?> item = queryForList.get(0);
+                return (String) item.get(dataTypeName) + "(" + item.get(length) + ")";
+            }
+        } catch (DatabaseException e) {
+            throw new UnexpectedLiquibaseException(e);
+        }
+        return null;
+    }
 }
