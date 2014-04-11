@@ -13,14 +13,10 @@ import liquibase.structure.core.Table;
 
 public class SequenceSnapshotGeneratorHana extends SequenceSnapshotGenerator {
 
-	@Override
-	protected String getSelectSequenceSql(Schema schema, Database database) {
-		if (database instanceof HanaDBDatabase) {
-			return "SELECT SEQUENCE_NAME FROM SYS.SEQUENCES WHERE SCHEMA_NAME = '"
-					+ schema.getName() + "'";
-		}
-		return super.getSelectSequenceSql(schema, database);
-	}
+    @Override
+    protected String getSelectSequenceSql(Schema schema, Database database) {
+        return "SELECT SEQUENCE_NAME FROM SYS.SEQUENCES WHERE SCHEMA_NAME = '" + schema.getName() + "'";
+    }
 
 	@Override
 	public DatabaseObject snapshot(DatabaseObject example,
@@ -38,8 +34,11 @@ public class SequenceSnapshotGeneratorHana extends SequenceSnapshotGenerator {
 	@Override
 	public int getPriority(Class<? extends DatabaseObject> objectType,
 			Database database) {
-		int priority = super.getPriority(objectType, database);
-		return priority + ((priority > 0) && database instanceof HanaDBDatabase ? 1 : 0);
+        if (database instanceof HanaDBDatabase) {
+            int priority = super.getPriority(objectType, database);
+            return priority + ((priority > 0) ? 1 : 0);
+        }
+        return PRIORITY_NONE;
 	}
 
 }

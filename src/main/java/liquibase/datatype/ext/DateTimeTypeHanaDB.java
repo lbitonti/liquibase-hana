@@ -14,12 +14,13 @@ import liquibase.statement.DatabaseFunction;
 public class DateTimeTypeHanaDB extends DateTimeType {
 
     @Override
-    public DatabaseDataType toDatabaseDataType(Database database) {
-        if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("TIMESTAMP");
-        }
+    public boolean supports(Database database) {
+        return database instanceof HanaDBDatabase;
+    }
 
-        return super.toDatabaseDataType(database);
+    @Override
+    public DatabaseDataType toDatabaseDataType(Database database) {
+        return new DatabaseDataType("TIMESTAMP");
     }
 
 }

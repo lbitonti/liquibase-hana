@@ -35,21 +35,20 @@
            <groupId>org.liquibase</groupId>
            <artifactId>liquibase-core</artifactId>
            <version>3.2.2</version>
-           <scope>provided</scope>
        </dependency>
 
        <dependency>
            <groupId>junit</groupId>
            <artifactId>junit</artifactId>
-           <scope>test</scope>
            <version>4.7</version>
+           <scope>test</scope>
        </dependency>
 
        <dependency>
            <groupId>org.easymock</groupId>
            <artifactId>easymockclassextension</artifactId>
-           <scope>test</scope>
            <version>2.2</version>
+           <scope>test</scope>
        </dependency>
    </dependencies>
 
@@ -59,8 +58,8 @@
                <plugin>
                    <artifactId>maven-compiler-plugin</artifactId>
                    <configuration>
-                       <source>1.5</source>
-                       <target>1.5</target>
+                       <source>1.6</source>
+                       <target>1.6</target>
                        <optimize>true</optimize>
                        <debug>true</debug>
                    </configuration>
