@@ -2,15 +2,16 @@ package liquibase.database.ext;
 
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
 import liquibase.database.OfflineConnection;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.ExecutorService;
@@ -369,7 +370,7 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
         try {
             return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from sys.dummy"), String.class);
         } catch (Exception e) {
-            LogFactory.getLogger().info("Error getting default schema", e);
+            LogFactory.getInstance().getLog().info("Error getting default schema", e);
         }
         return null;
     }
@@ -393,25 +394,50 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
 
     public String getColumnDataTypeName(String catalogName, String schemaName,
             String tableName, String columnName) {
-        final String dataTypeName = "DATA_TYPE_NAME";
-        final String length = "LENGTH";
-        String sql = "select " + dataTypeName + ", " + length + " from "
-                + escapeTableName(catalogName, "SYS", "TABLE_COLUMNS")
-                + " where schema_name = '" + schemaName
-                + "' and table_name = '" + correctObjectName(tableName, null)
-                + "' and column_name = '" + correctObjectName(columnName, null)
-                + "'";
+
+        ResultSet rs = null;
         try {
-            List<Map<String, ?>> queryForList = ExecutorService.getInstance()
-                    .getExecutor(this)
-                    .queryForList(new RawSqlStatement(sql, ""));
-            if (queryForList.size() == 1) {
-                final Map<String, ?> item = queryForList.get(0);
-                return (String) item.get(dataTypeName) + "(" + item.get(length) + ")";
+            rs = getJdbcConnection().getMetaData().getColumns(catalogName, schemaName, tableName, columnName);
+            while(rs.next()) {
+                int dataType = rs.getInt("DATA_TYPE");
+                String typeName = rs.getString("TYPE_NAME");
+                if (isLobDataType(dataType)) {
+                    return typeName;
+                } else {
+                    int columnSize = rs.getInt("COLUMN_SIZE");
+                    return typeName + '(' +  columnSize + ')';
+                }
             }
         } catch (DatabaseException e) {
             throw new UnexpectedLiquibaseException(e);
+        } catch (SQLException e) {
+            throw new UnexpectedLiquibaseException(e);
+        } finally {
+            closeResultSet(rs);
         }
-        return null;
+        throw new UnexpectedLiquibaseException("Could not determine data type for column = '" + columnName +
+                "' table = '" + tableName + "' schema = '" + schemaName + "' catalog = '" + catalogName + '\'');
+    }
+
+    private JdbcConnection getJdbcConnection() { 
+        JdbcConnection conn = (JdbcConnection) getConnection();
+        if (conn == null) {
+            throw new UnexpectedLiquibaseException("Could not retrieve a connection"); 
+        }  
+        return conn;
+    }
+
+    private boolean isLobDataType(int dataType) {
+        return dataType == Types.BLOB || dataType == Types.CLOB || dataType == Types.NCLOB;
+    }
+    
+    private void closeResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                LogFactory.getInstance().getLog().severe("SQL exception occurred", e);
+            }
+        }
     }
 }
