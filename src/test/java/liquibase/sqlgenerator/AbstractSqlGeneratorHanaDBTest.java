@@ -2,14 +2,21 @@ package liquibase.sqlgenerator;
 
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.CreateTableStatement;
 import org.junit.Test;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.easymock.EasyMock.anyString;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.*;
 
 public abstract class AbstractSqlGeneratorHanaDBTest<T extends SqlStatement> {
@@ -85,4 +92,24 @@ public abstract class AbstractSqlGeneratorHanaDBTest<T extends SqlStatement> {
         return true;
     }
 
+    protected HanaDBDatabase getHanaDBDatabaseMockingEmptyForeignKeyConstraints() throws SQLException, DatabaseException {
+            ResultSet empty = createNiceMock(ResultSet.class);
+            expect(empty.next()).andReturn(false).once();
+            replay(empty);
+            
+            DatabaseMetaData md = createNiceMock(DatabaseMetaData.class);
+            expect(md.getImportedKeys(anyString(), anyString(), anyString())).andReturn(empty);
+            expect(md.getExportedKeys(anyString(), anyString(), anyString())).andReturn(empty);
+            replay(md);
+
+            final JdbcConnection mockConnection = createNiceMock(JdbcConnection.class);
+            expect(mockConnection.getMetaData()).andReturn(md).anyTimes();
+            replay(mockConnection);
+            
+            return new HanaDBDatabase() {
+                public liquibase.database.DatabaseConnection getConnection() {
+                    return mockConnection;
+                }
+            };
+    }
 }

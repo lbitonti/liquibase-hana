@@ -3,6 +3,7 @@ package liquibase.sqlgenerator.ext;
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeFactory;
+import liquibase.metadata.ForeignKeyConstraintMetaData;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -12,6 +13,7 @@ import liquibase.statement.core.AddColumnStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
@@ -32,11 +34,19 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
             return sqlGeneratorChain.generateSql(statement, database);
         }
 
-        String alterTable = null;
+        String catalogName = statement.getCatalogName();
+        String schemaName = statement.getSchemaName();
+        if (schemaName == null) {
+            schemaName = database.getDefaultSchemaName();
+        }
+        String tableName = statement.getTableName();
+        String columnName = statement.getColumnName();
+        String columnType = statement.getColumnType();
 
-        alterTable = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
-                " ADD (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnType() + (statement.isAutoIncrement() ? "{autoIncrement:true}" : ""), database).toDatabaseDataType(database);
+        String alterTable = "ALTER TABLE " + database.escapeTableName(catalogName, schemaName, tableName) +
+                " ADD (" + database.escapeColumnName(catalogName, schemaName, tableName, columnName) +
+                " " + DataTypeFactory.getInstance().fromDescription(columnType + 
+                (statement.isAutoIncrement() ? "{autoIncrement:true}" : ""), database).toDatabaseDataType(database);
 
         if (statement.isAutoIncrement() && database.supportsAutoIncrement()) {
             AutoIncrementConstraint autoIncrementConstraint = statement.getAutoIncrementConstraint();
@@ -63,7 +73,15 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
         }
 
         List<Sql> returnSql = new ArrayList<Sql>();
+        
+        // drop both incoming and outgoing foreign key constraints before adding column
+        Set<ForeignKeyConstraintMetaData> constraints = SqlGeneratorHelperHanaDB.getAllForeignKeyConstraints(database, schemaName, tableName);
+        SqlGeneratorHelperHanaDB.addDropForeignKeyConstraintsStatements(returnSql, database, constraints);
+        
         returnSql.add(new UnparsedSql(alterTable, getAffectedColumn(statement)));
+        
+        // recreate foreign key constraints
+        SqlGeneratorHelperHanaDB.addCreateForeignKeyConstraintsStatements(returnSql, database, constraints);
 
         addForeignKeyStatements(statement, database, returnSql);
 

@@ -1,14 +1,17 @@
 package liquibase.sqlgenerator.ext;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeFactory;
-import liquibase.exception.ValidationErrors;
+import liquibase.metadata.ForeignKeyConstraintMetaData;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.SetNullableGenerator;
-import liquibase.statement.SqlStatement;
 import liquibase.statement.core.SetNullableStatement;
 
 public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
@@ -45,17 +48,24 @@ public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
         String catalogName = statement.getCatalogName();
         String tableName = statement.getTableName();
         String columnName = statement.getColumnName();
-        if (columnDataTypeName == null && schemaToUse != null) {
-            columnDataTypeName = ((HanaDBDatabase) database).getColumnDataTypeName(catalogName, schemaToUse, tableName, columnName);
+        if (columnDataTypeName == null) {
+            columnDataTypeName = SqlGeneratorHelperHanaDB.getColumnDataDefinition(database, catalogName, schemaToUse, tableName, columnName);
         }
+
+        // drop both incoming and outgoing foreign key constraints before dropping notNull constraint
+        Set<ForeignKeyConstraintMetaData> constraints = SqlGeneratorHelperHanaDB.getAllForeignKeyConstraints(database, schemaToUse, tableName);
+        List<Sql> sqlStatements = new ArrayList<Sql>();
+        SqlGeneratorHelperHanaDB.addDropForeignKeyConstraintsStatements(sqlStatements, database, constraints);
 
         String sql = "ALTER TABLE " + database.escapeTableName(catalogName, schemaToUse, tableName) +
                 " ALTER (" + database.escapeColumnName(catalogName, schemaToUse, tableName, columnName) +
                 " " + DataTypeFactory.getInstance().fromDescription(columnDataTypeName, database).toDatabaseDataType(database) + nullableString + ")";
+        sqlStatements.add(new UnparsedSql(sql, getAffectedColumn(statement)));
 
-        return new Sql[] {
-                new UnparsedSql(sql, getAffectedColumn(statement))
-        };
+        // recreate foreign key constraints
+        SqlGeneratorHelperHanaDB.addCreateForeignKeyConstraintsStatements(sqlStatements, database, constraints);
+
+        return sqlStatements.toArray(new Sql[sqlStatements.size()]);
     }
 
 }

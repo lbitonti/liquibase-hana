@@ -1,7 +1,10 @@
 package liquibase.sqlgenerator.ext;
 
-import liquibase.database.Database;
-import liquibase.database.core.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import liquibase.database.core.H2Database;
+import liquibase.database.core.MySQLDatabase;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.AbstractSqlGeneratorHanaDBTest;
@@ -9,25 +12,30 @@ import liquibase.sqlgenerator.MockSqlGeneratorChain;
 import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.AutoIncrementConstraint;
-import liquibase.statement.ColumnConstraint;
 import liquibase.statement.PrimaryKeyConstraint;
 import liquibase.statement.UniqueConstraint;
 import liquibase.statement.core.AddColumnStatement;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest<AddColumnStatement> {
 
+    private HanaDBDatabase hanadb;
+    
     public AddColumnGeneratorHanaDBTest() throws Exception {
         this(new AddColumnGeneratorHanaDB());
     } 
 
     protected AddColumnGeneratorHanaDBTest(SqlGenerator<AddColumnStatement> generatorUnderTest) throws Exception {
         super(generatorUnderTest);
+    }
+
+    
+    @Before
+    public void setup() throws Exception {
+        hanadb = getHanaDBDatabaseMockingEmptyForeignKeyConstraints();
     }
 
 	@Override
@@ -53,7 +61,6 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         super.isValid();
         AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "VARCHAR", "default_value", null);
 
-        Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
 
         assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());
@@ -68,7 +75,6 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         super.isValid();
         AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "INT", new Integer(10), null);
 
-        Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
 
         assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());
@@ -83,7 +89,6 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         super.isValid();
         AddColumnStatement addDefaultColumn = new AddColumnStatement(null, null, "table_name", "column_name", "BOOLEAN", new Boolean(false), null);
 
-        Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
 
         assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());
@@ -104,7 +109,6 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         AddColumnStatement addDefaultColumn =
                 new AddColumnStatement(null, null, "table_name", "column_name", "BOOLEAN", new Boolean(false), uniqueConstraint);
 
-        Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
 
         assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());

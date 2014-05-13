@@ -3,7 +3,6 @@ package liquibase.sqlgenerator.ext;
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.datatype.DataTypeFactory;
-import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -40,7 +39,7 @@ public class DropDefaultValueGeneratorHanaDB extends DropDefaultValueGenerator {
 
         String columnDataType = statement.getColumnDataType();
         if (columnDataType == null) {
-            columnDataType = ((HanaDBDatabase) database).getColumnDataTypeName(catalogName, schemaToUse, tableName, columnName);
+            columnDataType = SqlGeneratorHelperHanaDB.getColumnDataDefinition((HanaDBDatabase) database, catalogName, schemaToUse, tableName, columnName);
         }
         String sql = "ALTER TABLE " + database.escapeTableName(catalogName, schemaToUse, tableName) +
                 " ALTER (" + database.escapeColumnName(catalogName, schemaToUse, tableName, columnName) +

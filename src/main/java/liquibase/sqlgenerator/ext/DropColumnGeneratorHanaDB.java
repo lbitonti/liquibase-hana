@@ -1,7 +1,12 @@
 package liquibase.sqlgenerator.ext;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
+import liquibase.metadata.ForeignKeyConstraintMetaData;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -27,12 +32,30 @@ public class DropColumnGeneratorHanaDB extends DropColumnGenerator {
             return sqlGeneratorChain.generateSql(statement, database);
         }
 
-        return new Sql[] { new UnparsedSql("ALTER TABLE " +
-                database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
+        String catalogName = statement.getCatalogName();
+        String schemaName = statement.getSchemaName();
+        if (schemaName == null) {
+            schemaName = database.getDefaultSchemaName();
+        }
+        String tableName = statement.getTableName();
+        String columnName = statement.getColumnName();
+
+        List<Sql> returnSql = new ArrayList<Sql>();
+        
+        // drop both incoming and outgoing foreign key constraints before dropping column
+        Set<ForeignKeyConstraintMetaData> constraints = SqlGeneratorHelperHanaDB.getAllForeignKeyConstraints(database, schemaName, tableName);
+        SqlGeneratorHelperHanaDB.addDropForeignKeyConstraintsStatements(returnSql, database, constraints);
+        
+        returnSql.add(new UnparsedSql("ALTER TABLE " +
+                database.escapeTableName(catalogName, schemaName, tableName) +
                 " DROP (" +
-                database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                ")", getAffectedColumn(statement))
-        };
+                database.escapeColumnName(catalogName, schemaName, tableName, columnName) +
+                ")", getAffectedColumn(statement)));
+
+        // recreate foreign key constraints
+        SqlGeneratorHelperHanaDB.addCreateForeignKeyConstraintsStatements(returnSql, database, constraints);
+
+        return returnSql.toArray(new Sql[returnSql.size()]);
     }
 
 }
