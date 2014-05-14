@@ -22,6 +22,10 @@ public class DropUniqueConstraintGeneratorHanaDB extends DropUniqueConstraintGen
 
     @Override
     public Sql[] generateSql(DropUniqueConstraintStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         String sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
                 " DROP CONSTRAINT " + database.escapeConstraintName(statement.getConstraintName());
 

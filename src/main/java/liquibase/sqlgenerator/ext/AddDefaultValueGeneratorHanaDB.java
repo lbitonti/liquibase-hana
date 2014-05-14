@@ -24,6 +24,10 @@ public class AddDefaultValueGeneratorHanaDB extends AddDefaultValueGenerator {
 
     @Override
     public Sql[] generateSql(AddDefaultValueStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         Object defaultValue = statement.getDefaultValue();
         return new Sql[]{
                 new UnparsedSql("ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +

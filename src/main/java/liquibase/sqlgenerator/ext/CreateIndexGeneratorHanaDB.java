@@ -29,6 +29,9 @@ public class CreateIndexGeneratorHanaDB extends CreateIndexGenerator {
 
     @Override
     public Sql[] generateSql(CreateIndexStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
 
         // Default filter of index creation:
         // creation of all indexes with associations are switched off.

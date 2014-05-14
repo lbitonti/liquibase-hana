@@ -25,6 +25,10 @@ public class DropDefaultValueGeneratorHanaDB extends DropDefaultValueGenerator {
 
     @Override
     public Sql[] generateSql(DropDefaultValueStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         String tableName = statement.getTableName();
         String columnName = statement.getColumnName();
         String catalogName = statement.getCatalogName();

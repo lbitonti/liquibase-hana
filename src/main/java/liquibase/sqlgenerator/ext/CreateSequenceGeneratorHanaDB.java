@@ -35,6 +35,10 @@ public class CreateSequenceGeneratorHanaDB extends CreateSequenceGenerator {
 
     @Override
     public Sql[] generateSql(CreateSequenceStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         StringBuffer buffer = new StringBuffer();
         buffer.append("CREATE SEQUENCE ");
         buffer.append(database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName()));

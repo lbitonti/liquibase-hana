@@ -27,6 +27,10 @@ public class DropTableGeneratorHanaDB extends DropTableGenerator {
     }
 
     public Sql[] generateSql(DropTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         StringBuffer buffer = new StringBuffer();
         buffer.append("DROP TABLE ")
               .append(database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()));

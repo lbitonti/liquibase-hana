@@ -23,8 +23,11 @@ public class DropPrimaryKeyGeneratorHanaDB extends DropPrimaryKeyGenerator {
 
     @Override
     public Sql[] generateSql(DropPrimaryKeyStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String sql;
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
 
+        String sql;
         sql = "ALTER TABLE " +
                 database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
                 " DROP PRIMARY KEY";

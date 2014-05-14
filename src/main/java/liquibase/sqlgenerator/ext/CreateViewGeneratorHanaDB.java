@@ -41,6 +41,10 @@ public class CreateViewGeneratorHanaDB extends CreateViewGenerator {
 
     @Override
     public Sql[] generateSql(CreateViewStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         String createClause;
 
         List<Sql> sql = new ArrayList<Sql>();

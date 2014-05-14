@@ -22,6 +22,10 @@ public class GetViewDefinitionGeneratorHanaDB extends GetViewDefinitionGenerator
 
     @Override
     public Sql[] generateSql(GetViewDefinitionStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         return new Sql[] {
                 new UnparsedSql("SELECT DEFINITION FROM VIEWS WHERE upper(VIEW_NAME)='" + statement.getViewName().toUpperCase() + "'")
         };

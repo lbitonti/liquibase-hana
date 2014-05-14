@@ -28,6 +28,9 @@ public class AddColumnGeneratorHanaDB extends AddColumnGenerator {
 
     @Override
     public Sql[] generateSql(AddColumnStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
 
         String alterTable = null;
 
