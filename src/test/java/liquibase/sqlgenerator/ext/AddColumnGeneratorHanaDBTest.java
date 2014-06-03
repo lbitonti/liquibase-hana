@@ -66,7 +66,7 @@ public class AddColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest
         assertFalse(generatorUnderTest.validate(addDefaultColumn, hanadb, new MockSqlGeneratorChain()).hasErrors());
         Sql[] generatedSql = generatorUnderTest.generateSql(addDefaultColumn, hanadb, sqlGeneratorChain);
         assertTrue(generatedSql.length == 1);
-        assertEquals("ALTER TABLE \"table_name\" ADD (\"column_name\" VARCHAR DEFAULT 'default_value')", generatedSql[0].toSql());
+        assertEquals("ALTER TABLE \"table_name\" ADD (\"column_name\" NVARCHAR DEFAULT 'default_value')", generatedSql[0].toSql());
 
     }
 

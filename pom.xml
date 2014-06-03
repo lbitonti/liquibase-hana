@@ -23,11 +23,20 @@
            <name>Luigi Bitonti</name>
            <email>uknadors@yahoo.com</email>
        </developer>
-	   <developer>
-		   <id>MasterOdin</id>
-		   <name>Matthew Peveler</name>
-		   <email>matthew.peveler@gmail.com</email>
-	   </developer>
+       <developer>
+           <id>MasterOdin</id>
+           <name>Matthew Peveler</name>
+           <email>matthew.peveler@gmail.com</email>
+       </developer>
+       <developer>
+           <id>sabineheider</id>
+           <name>Sabine Heider</name>
+           <email>sabine.heider@sap.com</email>
+       </developer>
+       <developer>
+           <name>Marc Wirth</name>
+           <email>marc.wirth@sap.com</email>
+       </developer>
    </developers>
 
    <dependencies>
