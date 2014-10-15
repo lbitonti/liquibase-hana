@@ -4,7 +4,11 @@ package liquibase.database.ext;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
+import liquibase.database.OfflineConnection;
 import liquibase.exception.DatabaseException;
+import liquibase.executor.ExecutorService;
+import liquibase.logging.LogFactory;
+import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.View;
 
@@ -352,6 +356,20 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
     public boolean supportsAutoIncrement() {
         return false;
     }
+
+	@Override
+	protected String getConnectionSchemaName() {
+		if (getConnection() == null || getConnection() instanceof OfflineConnection) {
+			return null;
+		}
+		try {
+			return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from dummy"), String.class);
+		} catch (Exception e) {
+			LogFactory.getLogger().info("Error getting default schema", e);
+		}
+		return null;
+	}
+
 
 //    @Override
 //    public String escapeDatabaseObject(String objectName) {
