@@ -42,7 +42,7 @@ public class SetNullableGeneratorHanaDB extends SetNullableGenerator {
 
         sql = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) +
                 " ALTER (" + database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName()) +
-                " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnDataType()).toDatabaseDataType(database) +
+                " " + DataTypeFactory.getInstance().fromDescription(statement.getColumnDataType(), database).toDatabaseDataType(database) +
                 nullableString + ")";
 
         return new Sql[] {

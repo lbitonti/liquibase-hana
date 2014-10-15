@@ -5,7 +5,7 @@
    <groupId>org.liquibase.ext</groupId>
    <artifactId>liquibase-hana</artifactId>
    <name>Liquibase Hana support</name>
-   <version>3.0.2-SNAPSHOT-${maven.build.timestamp}</version>
+   <version>3.1-SNAPSHOT-${maven.build.timestamp}</version>
    <description>Liquibase support for SAP Hana DB</description>
 
    <url>https://github.com/lbitonti/liquibase</url>
@@ -23,13 +23,18 @@
            <name>Luigi Bitonti</name>
            <email>uknadors@yahoo.com</email>
        </developer>
+	   <developer>
+		   <id>MasterOdin</id>
+		   <name>Matthew Peveler</name>
+		   <email>matthew.peveler@gmail.com</email>
+	   </developer>
    </developers>
 
    <dependencies>
        <dependency>
            <groupId>org.liquibase</groupId>
            <artifactId>liquibase-core</artifactId>
-           <version>3.0.2</version>
+           <version>3.2.2</version>
            <scope>provided</scope>
        </dependency>
 

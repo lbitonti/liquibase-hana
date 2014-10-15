@@ -32,7 +32,7 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         Database database = new HanaDBDatabase();
         CreateTableStatement createTableStatement = new CreateTableStatement(null, null, "table_name");
         createTableStatement.addColumn("id",
-                DataTypeFactory.getInstance().fromDescription("int(11) unsigned"));
+                DataTypeFactory.getInstance().fromDescription("int(11) unsigned",database));
         return createTableStatement;
     }
 
@@ -43,7 +43,7 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         CreateTableStatement statement = new CreateTableStatement(null, null, "TABLE_NAME");
 
         statement.addColumn("COLUMN1_NAME",
-                DataTypeFactory.getInstance().fromDescription("java.sql.Types.TIMESTAMP"),
+                DataTypeFactory.getInstance().fromDescription("java.sql.Types.TIMESTAMP",database),
 //                TypeConverterFactory.getInstance().findTypeConverter(database).getDataType("java.sql.Types.TIMESTAMP", false),
                 new ColumnConfig().setDefaultValue("null").getDefaultValueObject());
 
@@ -58,7 +58,7 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         CreateTableStatement statement = new CreateTableStatement(null, null, "TABLE_NAME");
 
         statement.addColumn("COLUMN1_NAME",
-                DataTypeFactory.getInstance().fromDescription("int"));
+                DataTypeFactory.getInstance().fromDescription("int",database));
 
         assertEquals("CREATE TABLE \"TABLE_NAME\" (\"COLUMN1_NAME\" INTEGER)",
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
@@ -72,18 +72,18 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
 
         CreateTableStatement createTableStatement = new CreateTableStatement(null, null, "table_name");
         createTableStatement.addColumn("id",
-                DataTypeFactory.getInstance().fromDescription("VARCHAR(150)"),
+                DataTypeFactory.getInstance().fromDescription("VARCHAR(150)",database),
                 new ColumnConfig().setDefaultValue("NULL").getDefaultValueObject());
         createTableStatement.addColumn("author",
-                DataTypeFactory.getInstance().fromDescription("VARCHAR(150)"),
+                DataTypeFactory.getInstance().fromDescription("VARCHAR(150)",database),
                 new ColumnConfig().setDefaultValue("NULL").getDefaultValueObject());
         createTableStatement.addColumn("dateExecuted",
-                DataTypeFactory.getInstance().fromDescription("java.sql.Types.TIMESTAMP"),
+                DataTypeFactory.getInstance().fromDescription("java.sql.Types.TIMESTAMP",database),
                 new ColumnConfig().setDefaultValue("NULL").getDefaultValueObject());
         createTableStatement.addColumn("description",
-                DataTypeFactory.getInstance().fromDescription("VARCHAR(255)"));
+                DataTypeFactory.getInstance().fromDescription("VARCHAR(255)",database));
         createTableStatement.addColumn("revision",
-                DataTypeFactory.getInstance().fromDescription("int"));
+                DataTypeFactory.getInstance().fromDescription("int",database));
 
         Database hanadb = new HanaDBDatabase();
         SqlGeneratorChain sqlGeneratorChain = new MockSqlGeneratorChain();
@@ -107,7 +107,7 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         uniqueConstraint.addColumns("COLUMN1_NAME");
 
         statement.addColumn("COLUMN1_NAME",
-                DataTypeFactory.getInstance().fromDescription("int"));
+                DataTypeFactory.getInstance().fromDescription("int",database));
 
         statement.addColumnConstraint(uniqueConstraint);
 
@@ -125,9 +125,9 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         uniqueConstraint.addColumns("COLUMN1_NAME", "COLUMN2_NAME");
 
         statement.addColumn("COLUMN1_NAME",
-                DataTypeFactory.getInstance().fromDescription("int"));
+                DataTypeFactory.getInstance().fromDescription("int",database));
         statement.addColumn("COLUMN2_NAME",
-                DataTypeFactory.getInstance().fromDescription("varchar(100)"));
+                DataTypeFactory.getInstance().fromDescription("varchar(100)",database));
 
         statement.addColumnConstraint(uniqueConstraint);
 

@@ -1,7 +1,7 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-import liquibase.database.core.MaxDBDatabase;
+//import liquibase.database.core.MaxDBDatabase;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
