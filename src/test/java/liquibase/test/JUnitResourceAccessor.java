@@ -10,7 +10,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class JUnitResourceAccessor implements ResourceAccessor {
     private URLClassLoader classLoader;
@@ -29,14 +31,20 @@ public class JUnitResourceAccessor implements ResourceAccessor {
 //
 //    }
 
-    public InputStream getResourceAsStream(String file) throws IOException {
-        return classLoader.getResourceAsStream(file);
+    public java.util.Set<java.io.InputStream> getResourcesAsStream(String file) throws IOException {
+        Set<InputStream> inputStreamSet = new HashSet<InputStream>();
+		inputStreamSet.add(classLoader.getResourceAsStream(file));
+		return inputStreamSet;
     }
 
-    public Enumeration<URL> getResources(String packageName) throws IOException {
-        return classLoader.getResources(packageName);
-    }
+//    public Enumeration<URL> getResources(String packageName) throws IOException {
+//        return classLoader.getResources(packageName);
+//    }
 
+	public Set<String> list(String relativeTo, String path, boolean includeFiles, boolean includeDirectories, boolean recursive) throws IOException {
+//		Set<String> listSet = new HashSet<String>();
+		return new HashSet<String>();
+	}
     public ClassLoader toClassLoader() {
         return classLoader;
     }

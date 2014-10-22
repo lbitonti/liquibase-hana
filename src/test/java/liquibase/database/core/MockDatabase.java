@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -461,9 +462,15 @@ public class MockDatabase implements Database {
         return null;
     }
 
+	public void setLiquibaseCatalogName(String catalogName) {
+	}
+
     public String getLiquibaseSchemaName(){
         return null;
     }
+
+	public void setLiquibaseSchemaName(String schemaName) {
+	}
 
     public String getLiquibaseTablespaceName() {
         return null;
@@ -570,4 +577,41 @@ public class MockDatabase implements Database {
     public boolean supportsCatalogInObjectName(Class<? extends DatabaseObject> type) {
         return true;
     }
+
+	public boolean createsIndexesForForeignKeys() {
+		return false;
+	}
+
+	public void setOutputDefaultSchema(boolean outputDefaultSchema) {
+	}
+
+	public boolean getOutputDefaultSchema() {
+		return false;
+	}
+
+	public boolean isDefaultSchema(String catalog, String schema) {
+		return false;
+	}
+
+	public boolean isDefaultCatalog(String catalog) {
+		return false;
+	}
+
+	public boolean getOutputDefaultCatalog() {
+		return false;
+	}
+
+	public void setOutputDefaultCatalog(boolean outputDefaultCatalog) {
+	}
+
+	public boolean supportsPrimaryKeyNames() {
+		return true;
+	}
+
+	public String getSystemSchema() {
+		return "SYSTEM";
+	}
+
+	public void addReservedWords(Collection<String> words) {
+	}
 }
