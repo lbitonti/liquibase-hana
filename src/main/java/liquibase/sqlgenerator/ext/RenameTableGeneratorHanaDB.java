@@ -13,6 +13,11 @@ import liquibase.statement.core.RenameTableStatement;
 public class RenameTableGeneratorHanaDB extends RenameTableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(RenameTableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
@@ -27,8 +32,11 @@ public class RenameTableGeneratorHanaDB extends RenameTableGenerator {
 
     @Override
     public Sql[] generateSql(RenameTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        String sql;
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
 
+        String sql;
         sql = "RENAME TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getOldTableName()) +
 //                " TO " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getNewTableName());
                 " TO " + database.escapeTableName(null, null, statement.getNewTableName());

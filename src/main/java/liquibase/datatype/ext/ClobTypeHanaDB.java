@@ -14,12 +14,13 @@ import liquibase.datatype.core.ClobType;
 public class ClobTypeHanaDB extends ClobType {
 
     @Override
-    public DatabaseDataType toDatabaseDataType(Database database) {
-        if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("NCLOB");
-        }
+    public boolean supports(Database database) {
+        return (database instanceof HanaDBDatabase);
+    }
 
-        return super.toDatabaseDataType(database);
+    @Override
+    public DatabaseDataType toDatabaseDataType(Database database) {
+        return new DatabaseDataType("NCLOB");
     }
 
 }

@@ -1,10 +1,7 @@
 package liquibase.sqlgenerator.ext;
 
 import liquibase.database.Database;
-//import liquibase.database.core.MaxDBDatabase;
 import liquibase.database.ext.HanaDBDatabase;
-import liquibase.exception.DatabaseException;
-import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -25,6 +22,10 @@ public class GetViewDefinitionGeneratorHanaDB extends GetViewDefinitionGenerator
 
     @Override
     public Sql[] generateSql(GetViewDefinitionStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         return new Sql[] {
                 new UnparsedSql("SELECT DEFINITION FROM VIEWS WHERE upper(VIEW_NAME)='" + statement.getViewName().toUpperCase() + "'")
         };

@@ -27,6 +27,10 @@ public class DropIndexGeneratorHanaDB extends DropIndexGenerator {
 
     @Override
     public Sql[] generateSql(DropIndexStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         List<String> associatedWith = StringUtils.splitAndTrim(statement.getAssociatedWith(), ",");
         if (associatedWith != null) {
             if (associatedWith.contains(Index.MARK_PRIMARY_KEY)|| associatedWith.contains(Index.MARK_UNIQUE_CONSTRAINT) ||

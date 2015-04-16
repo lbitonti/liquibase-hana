@@ -1,6 +1,9 @@
 package liquibase.database.ext;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
@@ -11,10 +14,6 @@ import liquibase.logging.LogFactory;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.View;
-
-import java.util.HashSet;
-import java.util.Set;
-
 
 public class HanaDBDatabase extends AbstractJdbcDatabase {
 
@@ -27,7 +26,8 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
         super.quotingStartCharacter ="\"";
         super.quotingEndCharacter="\"";
         setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
-
+        unquotedObjectsAreUppercased = true;
+        
         systemTablesAndViews.add("---");
 
         systemTablesAndViews.add("AUDIT_POLICIES");
@@ -301,7 +301,7 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
     }
 
     public Integer getDefaultPort() {
-        return 3415;
+        return 30015;
     }
 
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
@@ -357,23 +357,33 @@ public class HanaDBDatabase extends AbstractJdbcDatabase {
         return false;
     }
 
-	@Override
-	protected String getConnectionSchemaName() {
-		if (getConnection() == null || getConnection() instanceof OfflineConnection) {
-			return null;
-		}
-		try {
-			return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from dummy"), String.class);
-		} catch (Exception e) {
-			LogFactory.getLogger().info("Error getting default schema", e);
-		}
-		return null;
-	}
+    @Override
+    protected String getConnectionSchemaName() {
+        if (getConnection() == null || getConnection() instanceof OfflineConnection) {
+            return null;
+        }
+        try {
+            return ExecutorService.getInstance().getExecutor(this).queryForObject(new RawSqlStatement("select current_schema from sys.dummy"), String.class);
+        } catch (Exception e) {
+            LogFactory.getInstance().getLog().info("Error getting default schema", e);
+        }
+        return null;
+    }
 
+
+    @Override
+    public boolean supportsDDLInTransaction() {
+        // see http://help.sap.com/saphelp_hanaplatform/helpdata/en/20/fdf9cb75191014b85aaa9dec841291/content.htm
+        return false;
+    }
 
 //    @Override
 //    public String escapeDatabaseObject(String objectName) {
 //        return "\"" + objectName + "\"";
 //    }
 
+    @Override
+    public boolean supportsCatalogs() {
+        return false;
+    }
 }

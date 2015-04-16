@@ -15,7 +15,7 @@ public class VarcharTypeHanaDB extends VarcharType {
     @Override
     public DatabaseDataType toDatabaseDataType(Database database) {
         if (database instanceof HanaDBDatabase) {
-            return new DatabaseDataType("VARCHAR", getParameters());
+            return new DatabaseDataType("NVARCHAR", getParameters());
         }
         return super.toDatabaseDataType(database);
     }

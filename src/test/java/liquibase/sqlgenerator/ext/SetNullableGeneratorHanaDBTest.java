@@ -1,18 +1,19 @@
 package liquibase.sqlgenerator.ext;
 
-import liquibase.database.Database;
+import static org.junit.Assert.assertEquals;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.sqlgenerator.AbstractSqlGeneratorHanaDBTest;
 import liquibase.sqlgenerator.SqlGenerator;
-import liquibase.statement.core.DropUniqueConstraintStatement;
 import liquibase.statement.core.SetNullableStatement;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class SetNullableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest<SetNullableStatement> {
 
+    private HanaDBDatabase database;
+    
     public SetNullableGeneratorHanaDBTest() throws Exception {
         this(new SetNullableGeneratorHanaDB());
     }
@@ -21,9 +22,13 @@ public class SetNullableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         super(generatorUnderTest);
     }
 
-	@Override
+    @Before
+    public void setup() throws Exception {
+        database = getHanaDBDatabaseMockingEmptyForeignKeyConstraints();
+    }
+
+    @Override
 	protected SetNullableStatement createSampleSqlStatement() {
-        Database database = new HanaDBDatabase();
         SetNullableStatement setNullableStatement = new SetNullableStatement(null, null, "table_name", "column_name", "int unsigned", false);
         return setNullableStatement;
     }
@@ -31,7 +36,6 @@ public class SetNullableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
 
     @Test
     public void testSetNullableNoSchema() {
-        Database database = new HanaDBDatabase();
         SetNullableStatement statement = new SetNullableStatement(null, null, "table_name", "column_name", "int", false);
 
         assertEquals("ALTER TABLE \"table_name\" ALTER (\"column_name\" INTEGER NOT NULL)",
@@ -40,7 +44,6 @@ public class SetNullableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
 
     @Test
     public void testSetNullableWithSchema() {
-        Database database = new HanaDBDatabase();
         SetNullableStatement statement = new SetNullableStatement(null, "schema_name", "table_name", "column_name", "int", true);
 
         assertEquals("ALTER TABLE \"schema_name\".\"table_name\" ALTER (\"column_name\" INTEGER NULL)",

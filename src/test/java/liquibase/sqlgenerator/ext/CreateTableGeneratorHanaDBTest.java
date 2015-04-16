@@ -91,8 +91,8 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
         assertFalse(generatorUnderTest.validate(createTableStatement, hanadb, new MockSqlGeneratorChain()).hasErrors());
         Sql[] generatedSql = generatorUnderTest.generateSql(createTableStatement, hanadb, sqlGeneratorChain);
         assertTrue(generatedSql.length == 1);
-        assertEquals("CREATE TABLE \"table_name\" (\"id\" VARCHAR(150) DEFAULT null, \"author\" VARCHAR(150) DEFAULT null, " +
-                "\"dateExecuted\" TIMESTAMP DEFAULT null, \"description\" VARCHAR(255), \"revision\" INTEGER)",
+        assertEquals("CREATE TABLE \"table_name\" (\"id\" NVARCHAR(150) DEFAULT null, \"author\" NVARCHAR(150) DEFAULT null, " +
+                "\"dateExecuted\" TIMESTAMP DEFAULT null, \"description\" NVARCHAR(255), \"revision\" INTEGER)",
                 generatedSql[0].toSql());
     }
 
@@ -131,7 +131,7 @@ public class CreateTableGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTe
 
         statement.addColumnConstraint(uniqueConstraint);
 
-        assertEquals("CREATE TABLE \"TABLE_NAME\" (\"COLUMN1_NAME\" INTEGER, \"COLUMN2_NAME\" VARCHAR(100), UNIQUE (\"COLUMN1_NAME\", \"COLUMN2_NAME\"))",
+        assertEquals("CREATE TABLE \"TABLE_NAME\" (\"COLUMN1_NAME\" INTEGER, \"COLUMN2_NAME\" NVARCHAR(100), UNIQUE (\"COLUMN1_NAME\", \"COLUMN2_NAME\"))",
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
     }
 

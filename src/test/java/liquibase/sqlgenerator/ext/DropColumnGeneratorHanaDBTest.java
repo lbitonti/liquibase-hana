@@ -1,18 +1,19 @@
 package liquibase.sqlgenerator.ext;
 
-import liquibase.database.Database;
+import static org.junit.Assert.assertEquals;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.sqlgenerator.AbstractSqlGeneratorHanaDBTest;
 import liquibase.sqlgenerator.SqlGenerator;
-import liquibase.statement.core.CreateViewStatement;
 import liquibase.statement.core.DropColumnStatement;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class DropColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTest<DropColumnStatement> {
 
+    private HanaDBDatabase database;
+    
     public DropColumnGeneratorHanaDBTest() throws Exception {
         this(new DropColumnGeneratorHanaDB());
     }
@@ -21,9 +22,13 @@ public class DropColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTes
         super(generatorUnderTest);
     }
 
-	@Override
+    @Before
+    public void setup() throws Exception {
+        database = getHanaDBDatabaseMockingEmptyForeignKeyConstraints();
+    }
+
+    @Override
 	protected DropColumnStatement createSampleSqlStatement() {
-        Database database = new HanaDBDatabase();
         DropColumnStatement dropColumnStatement = new DropColumnStatement(null, null, "table_name", "column_name");
         return dropColumnStatement;
     }
@@ -31,7 +36,6 @@ public class DropColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTes
 
     @Test
     public void testSingleColumnDropNoSchema() {
-        Database database = new HanaDBDatabase();
         DropColumnStatement statement = new DropColumnStatement(null, null, "table_name", "column_name");
 
         assertEquals("ALTER TABLE \"table_name\" DROP (\"column_name\")",
@@ -40,7 +44,6 @@ public class DropColumnGeneratorHanaDBTest extends AbstractSqlGeneratorHanaDBTes
 
     @Test
     public void testSingleColumnDropWithSchema() {
-        Database database = new HanaDBDatabase();
         DropColumnStatement statement = new DropColumnStatement(null, "schema_name", "table_name", "column_name");
 
         assertEquals("ALTER TABLE \"schema_name\".\"table_name\" DROP (\"column_name\")",

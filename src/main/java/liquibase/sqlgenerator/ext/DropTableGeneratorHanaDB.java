@@ -17,11 +17,20 @@ import liquibase.statement.core.DropTableStatement;
 public class DropTableGeneratorHanaDB extends DropTableGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropTableStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
 
     public Sql[] generateSql(DropTableStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         StringBuffer buffer = new StringBuffer();
         buffer.append("DROP TABLE ")
               .append(database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()));

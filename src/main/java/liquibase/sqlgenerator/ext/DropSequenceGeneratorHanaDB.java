@@ -12,11 +12,20 @@ import liquibase.statement.core.DropSequenceStatement;
 public class DropSequenceGeneratorHanaDB extends DropSequenceGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(DropSequenceStatement statement, Database database) {
         return database.supportsSequences();
     }
 
     public Sql[] generateSql(DropSequenceStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         String sql = "DROP SEQUENCE " +
                 database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName());
         if (database instanceof PostgresDatabase) {

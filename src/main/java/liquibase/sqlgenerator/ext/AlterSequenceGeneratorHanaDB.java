@@ -13,6 +13,11 @@ import liquibase.statement.core.AlterSequenceStatement;
 public class AlterSequenceGeneratorHanaDB extends AlterSequenceGenerator {
 
     @Override
+    public int getPriority() {
+        return PRIORITY_DATABASE;
+    }
+
+    @Override
     public boolean supports(AlterSequenceStatement statement, Database database) {
         return database instanceof HanaDBDatabase;
     }
@@ -30,6 +35,10 @@ public class AlterSequenceGeneratorHanaDB extends AlterSequenceGenerator {
 
     @Override
     public Sql[] generateSql(AlterSequenceStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        if (!supports(statement, database)) {
+            return sqlGeneratorChain.generateSql(statement, database);
+        }
+
         StringBuffer buffer = new StringBuffer();
         buffer.append("ALTER SEQUENCE ");
         buffer.append(database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName()));
