@@ -451,7 +451,7 @@ public abstract class AbstractIntegrationTest {
             CompareControl compareControl = new CompareControl();
             DiffOutputControl diffOutputControl = new DiffOutputControl();
             File tempFile = File.createTempFile("liquibase-test", ".xml");
-            FileUtil.forceDeleteOnExit(tempFile);
+            FileUtil.deleteOnExit(tempFile);
             if (outputCsv) {
                 diffOutputControl.setDataDir(new File(tempFile.getParentFile(), "liquibase-data").getCanonicalPath().replaceFirst("\\w:",""));
             }
@@ -616,7 +616,7 @@ public abstract class AbstractIntegrationTest {
         clearDatabase(liquibase);
 
         liquibase = createLiquibase(completeChangeLog);
-        liquibase.checkLiquibaseTables(false, null, new Contexts());
+        liquibase.checkLiquibaseTables(false, null, new Contexts(), null);
         liquibase.tag("empty");
 
         liquibase = createLiquibase(rollbackChangeLog);
@@ -636,7 +636,7 @@ public abstract class AbstractIntegrationTest {
         clearDatabase(liquibase);
 
         liquibase = createLiquibase(completeChangeLog);
-        List<ChangeSet> list = liquibase.listUnrunChangeSets(this.contexts);
+        List<ChangeSet> list = liquibase.listUnrunChangeSets(new Contexts(this.contexts));
 
         assertTrue(list.size() > 0);
 
@@ -766,7 +766,7 @@ public abstract class AbstractIntegrationTest {
         liquibase = createLiquibase(completeChangeLog);
         liquibase.generateDocumentation(outputDir.getAbsolutePath(), this.contexts);
 
-        FileUtil.forceDeleteOnExit(outputDir);
+        FileUtil.deleteOnExit(outputDir);
     }
 
 

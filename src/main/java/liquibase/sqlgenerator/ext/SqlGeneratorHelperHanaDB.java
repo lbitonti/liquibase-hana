@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import liquibase.change.ColumnConfig;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
@@ -76,9 +77,9 @@ public class SqlGeneratorHelperHanaDB {
         for (ForeignKeyConstraintMetaData constraint : constraints) {
             AddForeignKeyConstraintStatement statement = new AddForeignKeyConstraintStatement(
                     constraint.getForeignKeyName(), null, constraint.getForeignKeySchema(),
-                    constraint.getForeignKeyTable(), constraint.getForeignKeyColumnsAsString(), null,
+                    constraint.getForeignKeyTable(), ColumnConfig.arrayFromNames(constraint.getForeignKeyColumnsAsString()), null,
                     constraint.getPrimaryKeySchema(), constraint.getPrimaryKeyTable(),
-                    constraint.getPrimaryKeyColumnsAsString()).setOnDelete(constraint.getDeleteRuleAsString())
+                    ColumnConfig.arrayFromNames(constraint.getPrimaryKeyColumnsAsString())).setOnDelete(constraint.getDeleteRuleAsString())
                     .setOnUpdate(constraint.getUpdateRuleAsString());
             sql.addAll(Arrays.asList(new AddForeignKeyConstraintGenerator().generateSql(statement, database, null)));
         }

@@ -1,5 +1,6 @@
 package liquibase.sqlgenerator.ext;
 
+import liquibase.change.AddColumnConfig;
 import liquibase.database.Database;
 import liquibase.database.ext.HanaDBDatabase;
 import liquibase.sql.Sql;
@@ -57,10 +58,10 @@ public class CreateIndexGeneratorHanaDB extends CreateIndexGenerator {
 	    }
 	    buffer.append("ON ");
 	    buffer.append(database.escapeTableName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName())).append(" (");
-	    Iterator<String> iterator = Arrays.asList(statement.getColumns()).iterator();
+	    Iterator<AddColumnConfig> iterator = Arrays.asList(statement.getColumns()).iterator();
 	    while (iterator.hasNext()) {
-		    String column = iterator.next();
-		    buffer.append(database.escapeColumnName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName(), column));
+		    AddColumnConfig column = iterator.next();
+		    buffer.append(database.escapeColumnName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName(), column.getName()));
 		    if (iterator.hasNext()) {
 			    buffer.append(", ");
 		    }
