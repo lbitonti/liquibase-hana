@@ -1,7 +1,6 @@
 package liquibase.database.core;
 
 import liquibase.CatalogAndSchema;
-import liquibase.Liquibase;
 import liquibase.change.Change;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
@@ -9,10 +8,13 @@ import liquibase.changelog.RanChangeSet;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.DatabaseHistoryException;
+import liquibase.exception.DateParseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.exception.RollbackImpossibleException;
+import liquibase.exception.StatementNotSupportedOnDatabaseException;
 import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.Schema;
-import liquibase.exception.*;
-import liquibase.lockservice.DatabaseChangeLogLock;
 import liquibase.sql.visitor.SqlVisitor;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SqlStatement;
@@ -20,7 +22,6 @@ import liquibase.statement.SqlStatement;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
-import java.sql.Connection;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -32,11 +33,6 @@ public class MockDatabase implements Database {
     @Override
     public int getPriority() {
         return PRIORITY_DEFAULT;
-    }
-
-
-    public Schema getSchema() {
-        return null;
     }
 
     public String getName() {
@@ -51,14 +47,6 @@ public class MockDatabase implements Database {
     @Override
     public Integer getDefaultPort() {
         return null;
-    }
-
-    public DatabaseObject[] getContainingObjects() {
-        return null;
-    }
-
-    public boolean equals(DatabaseObject otherObject, Database accordingTo) {
-        return otherObject.getName().equalsIgnoreCase(this.getName());
     }
 
     @Override
@@ -89,9 +77,6 @@ public class MockDatabase implements Database {
     @Override
     public DatabaseConnection getConnection() {
         return null;
-    }
-
-    public void setConnection(Connection conn) {
     }
 
     @Override
@@ -147,18 +132,6 @@ public class MockDatabase implements Database {
 
     @Override
     public String getShortName() {
-        return null;
-    }
-
-    public String getDriverName() throws DatabaseException {
-        return null;
-    }
-
-    public String getConnectionURL() throws DatabaseException {
-        return null;
-    }
-
-    public String getConnectionUsername() throws DatabaseException {
         return null;
     }
 
@@ -244,10 +217,6 @@ public class MockDatabase implements Database {
                 + incrementBy != null ? (" " + incrementBy) : "";
     }
 
-    public SqlStatement getCommitSQL() {
-        return null;
-    }
-
     /**
      * @see liquibase.database.Database#getDatabaseChangeLogTableName()
      */
@@ -287,31 +256,6 @@ public class MockDatabase implements Database {
         return null;
     }
 
-    public boolean acquireLock(Liquibase liquibase) throws LockException {
-        return false;
-    }
-
-    public void releaseLock() throws LockException {
-    }
-
-    public DatabaseChangeLogLock[] listLocks() throws LockException {
-        return new DatabaseChangeLogLock[0];
-    }
-
-    public boolean hasDatabaseChangeLogTable() {
-        return false;
-    }
-
-    public boolean hasDatabaseChangeLogLockTable() {
-        return false;
-    }
-
-    public void checkDatabaseChangeLogTable(Liquibase liquibase) throws DatabaseException, IOException {
-    }
-
-    public void checkDatabaseChangeLogLockTable(Liquibase liquibase) throws DatabaseException, IOException {
-    }
-
     @Override
     public void dropDatabaseObjects(CatalogAndSchema schema) throws DatabaseException {
     }
@@ -346,10 +290,6 @@ public class MockDatabase implements Database {
         return null;
     }
 
-    public String getDatabaseProductName(DatabaseConnection conn) throws DatabaseException {
-        return "Mock Database";
-    }
-
     @Override
     public String getDateLiteral(Date defaultDateValue) {
         return defaultDateValue.toString();
@@ -375,6 +315,11 @@ public class MockDatabase implements Database {
     }
 
     @Override
+    public String escapeColumnName(String catalogName, String schemaName, String tableName, String columnName, boolean quoteNamesThatMayBeFunctions) {
+        return columnName;
+    }
+
+    @Override
     public String escapeColumnNameList(String columnNames) {
         return columnNames;
     }
@@ -388,14 +333,6 @@ public class MockDatabase implements Database {
         }
     }
 
-    public String convertRequestedSchemaToSchema(String requestedSchema) throws DatabaseException {
-        return requestedSchema;
-    }
-
-    public String convertRequestedSchemaToCatalog(String requestedSchema) throws DatabaseException {
-        return null;
-    }
-
     @Override
     public boolean supportsSchemas() {
         return true;
@@ -403,10 +340,6 @@ public class MockDatabase implements Database {
 
     @Override
     public boolean supportsCatalogs() {
-        return true;
-    }
-
-    public boolean supportsCatalogInObjectName() {
         return true;
     }
 
@@ -418,18 +351,6 @@ public class MockDatabase implements Database {
     @Override
     public String escapeViewName(String catalogName, String schemaName, String viewName) {
         return escapeTableName(catalogName, schemaName, viewName);
-    }
-
-    public boolean acquireLock() throws LockException {
-        return false;
-    }
-
-    public void checkDatabaseChangeLogTable(boolean updateExistingNullChecksums, DatabaseChangeLog databaseChangeLog, String[] contexts) throws DatabaseException {
-        ;
-    }
-
-    public void checkDatabaseChangeLogLockTable() throws DatabaseException {
-        ;
     }
 
     @Override
@@ -470,10 +391,6 @@ public class MockDatabase implements Database {
     @Override
     public void rollback() {
         ;
-    }
-
-    public SqlStatement getSelectChangeLogLockSQL() throws DatabaseException {
-        return null;
     }
 
     @Override
@@ -532,6 +449,11 @@ public class MockDatabase implements Database {
     }
 
     @Override
+    public void executeRollbackStatements(SqlStatement[] statements, List<SqlVisitor> sqlVisitors) throws LiquibaseException, RollbackImpossibleException {
+        ;
+    }
+
+    @Override
     public void saveRollbackStatement(Change change, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, RollbackImpossibleException, StatementNotSupportedOnDatabaseException, LiquibaseException {
         ;
     }
@@ -564,10 +486,6 @@ public class MockDatabase implements Database {
 
     }
 
-    public int getNextChangeSetSequenceValue() throws LiquibaseException {
-        return 1;
-    }
-
     @Override
     public Date parseDate(String dateAsString) throws DateParseException {
         return new Date();
@@ -598,10 +516,6 @@ public class MockDatabase implements Database {
 
     }
 
-    public void updateChecksum(ChangeSet changeSet) throws DatabaseException {
-
-    }
-
     @Override
     public boolean isReservedWord(String string) {
         return false;
@@ -617,10 +531,6 @@ public class MockDatabase implements Database {
         return name;
     }
 
-    public String correctObjectName(String name, Class<? extends DatabaseObject> objectType, boolean quoteCorrectedName) {
-        return name;
-    }
-
     @Override
     public boolean isFunction(String string) {
         if (string.endsWith("()")) {
@@ -632,26 +542,6 @@ public class MockDatabase implements Database {
     @Override
     public int getDataTypeMaxParameters(String dataTypeName) {
         return 2;
-    }
-
-    public CatalogAndSchema getSchemaFromJdbcInfo(String rawCatalogName, String rawSchemaName) {
-        return new CatalogAndSchema(rawCatalogName, rawSchemaName);
-    }
-
-    public String getJdbcCatalogName(CatalogAndSchema schema) {
-        return schema.getCatalogName();
-    }
-
-    public String getJdbcSchemaName(CatalogAndSchema schema) {
-        return schema.getSchemaName();
-    }
-
-    public String getJdbcCatalogName(Schema schema) {
-        return schema.getCatalogName();
-    }
-
-    public String getJdbcSchemaName(Schema schema) {
-        return schema.getName();
     }
 
     @Override
@@ -724,4 +614,19 @@ public class MockDatabase implements Database {
 	@Override
     public void addReservedWords(Collection<String> words) {
 	}
+
+    @Override
+    public String escapeDataTypeName(String dataTypeName) {
+        return dataTypeName;
+    }
+
+    @Override
+    public String unescapeDataTypeName(String dataTypeName) {
+        return dataTypeName;
+    }
+
+    @Override
+    public String unescapeDataTypeString(String dataTypeString) {
+        return dataTypeString;
+    }
 }

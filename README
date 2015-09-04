@@ -1,6 +1,7 @@
 Liquibase extension that provides support for  SAP Hana DB.
 
 Initial Hana DB support is currently implemented in the 2.0.x and 3.0.x branches. The master branch at the moment follows 3.2.x.
+This is built against version 3.4.1 of Liquibase.
 
 The original Liquibase distribution is available at: https://github.com/liquibase/liquibase/
 
