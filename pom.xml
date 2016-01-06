@@ -2,13 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
    <modelVersion>4.0.0</modelVersion>
-   <groupId>org.liquibase.ext</groupId>
+   <groupId>com.github.lbitonti</groupId>
    <artifactId>liquibase-hana</artifactId>
    <name>Liquibase Hana support</name>
-   <version>3.1-SNAPSHOT</version>
+   <version>3.1</version>
+   <packaging>jar</packaging>
    <description>Liquibase support for SAP Hana DB</description>
 
-   <url>https://github.com/lbitonti/liquibase</url>
+   <url>https://github.com/lbitonti/liquibase-hana</url>
 
    <licenses>
        <license>
@@ -16,6 +17,13 @@
            <name>Apache License, Version 2.0</name>
        </license>
    </licenses>
+
+    <scm>
+        <url>https://github.com/lbitonti/liquibase-hana</url>
+        <connection>scm:git:git://github.com/lbitonti/liquibase-hana.git</connection>
+        <developerConnection>scm:git:git@github.com:lbitonti/liquibase-hana.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
    <developers>
        <developer>
@@ -43,7 +51,7 @@
        <dependency>
            <groupId>org.liquibase</groupId>
            <artifactId>liquibase-core</artifactId>
-           <version>3.4.1</version>
+           <version>3.4.2</version>
        </dependency>
 
        <dependency>
@@ -93,24 +101,6 @@
        </pluginManagement>
    </build>
 
-<!--
-   <distributionManagement>
-       <repository>
-           <uniqueVersion>false</uniqueVersion>
-           <id>sonatype-nexus-staging</id>
-           <name>Sonatype Production Repository</name>
-           <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-       </repository>
-
-       <snapshotRepository>
-           <uniqueVersion>false</uniqueVersion>
-           <id>sonatype-nexus-snapshots</id>
-           <name>Sontatype Snapshot Repository</name>
-           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-       </snapshotRepository>
-   </distributionManagement>
--->
-
    <profiles>
        <profile>
            <id>release-sign-artifacts</id>
@@ -124,6 +114,30 @@
            <build>
                <plugins>
                    <plugin>
+                       <artifactId>maven-source-plugin</artifactId>
+                       <version>2.3</version>
+                       <executions>
+                           <execution>
+                               <id>attach-sources</id>
+                               <goals>
+                                   <goal>jar</goal>
+                               </goals>
+                           </execution>
+                       </executions>
+                   </plugin>
+                   <plugin>
+                       <artifactId>maven-javadoc-plugin</artifactId>
+                       <version>2.8.1</version>
+                       <executions>
+                           <execution>
+                               <id>attach-javadocs</id>
+                               <goals>
+                                   <goal>jar</goal>
+                               </goals>
+                           </execution>
+                       </executions>
+                   </plugin>
+                   <plugin>
                        <groupId>org.apache.maven.plugins</groupId>
                        <artifactId>maven-gpg-plugin</artifactId>
                        <executions>
@@ -135,6 +149,17 @@
                                </goals>
                            </execution>
                        </executions>
+                   </plugin>
+                   <plugin>
+                       <groupId>org.sonatype.plugins</groupId>
+                       <artifactId>nexus-staging-maven-plugin</artifactId>
+                       <version>1.6.6</version>
+                       <extensions>true</extensions>
+                       <configuration>
+                           <serverId>ossrh</serverId>
+                           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                           <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                       </configuration>
                    </plugin>
                </plugins>
            </build>

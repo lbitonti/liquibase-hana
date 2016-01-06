@@ -1,7 +1,6 @@
 Liquibase extension that provides support for  SAP Hana DB.
 
-Initial Hana DB support is currently implemented in the 2.0.x and 3.0.x branches. The master branch at the moment follows 3.2.x.
-This is built against version 3.4.1 of Liquibase.
+Initial Hana DB support is currently implemented in the 2.0.x and 3.0.x branches. The master branch at the moment follows 3.4.x and it's built against version 3.4.2 of Liquibase.
 
 The original Liquibase distribution is available at: https://github.com/liquibase/liquibase/
 
@@ -9,13 +8,19 @@ The official liquibase site is: http://www.liquibase.org
 
 Released under the Apache 2.0 License with no guarantee whatsoever.
 
-
-The 2.0.x branch is built against Liquibase 2.0.5, the 3.0.x branch against version 3.0.2 of Liquibase.
-
-This is work in progress, currently used in a project I am working on. Branch 2.0.x has definitely undergone more testing.
+This is currently used in some projects I have been involved with. Branch 3.0.x has definitely undergone more testing at this point, but 2.0.x is still used in production with good results.
 If you give it a go, I'd like to know how it worked for you.
 
-The current generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
+It's available from Maven Central. If you are using maven, add the following dependency:
+
+<dependency>
+  <groupId>com.github.lbitonti</groupId>
+  <artifactId>liquibase-hana</artifactId>
+  <version>3.1</version>
+</dependency>
+
+
+The following generators are currently implemented (please keep in mind Hana limitations for some operations while using them):
 
 AddAutoIncrementGenerator
 AddColumnGenerator
