@@ -45,26 +45,6 @@ public class ModifyDataTypeGeneratorHanaDB extends ModifyDataTypeGenerator {
                 .append(newDataType)
                 .append(")");
 
-//        String alterTable = "ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName());
-//
-//        // add "MODIFY"
-//        alterTable += " " + getModifyString(database) + " ";
-//
-//        // add column name
-//        String columnName = database.escapeColumnName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName(), statement.getColumnName());
-//        alterTable += columnName;
-//
-//        alterTable += getPreDataTypeString(database); // adds a space if nothing else
-//
-//        // add column type
-//        DatabaseDataType newDataType = DataTypeFactory.getInstance().fromDescription(statement.getNewDataType(), database).toDatabaseDataType(database);
-//
-//        alterTable += newDataType;
-//
-//        if (database instanceof PostgresDatabase) {
-//            alterTable += " USING ("+columnName+"::"+newDataType+")";
-//        }
-
         String sql = buffer.toString();
 
         return new Sql[]{new UnparsedSql(sql, getAffectedTable(statement))};
