@@ -9,7 +9,7 @@ import liquibase.datatype.LiquibaseDataType;
 import liquibase.datatype.core.BlobType;
 
 
-@DataTypeInfo(name="blob", aliases = {"longblob", "longvarbinary", "java.sql.Types.BLOB", "java.sql.Types.LONGBLOB", "java.sql.Types.LONGVARBINARY", "java.sql.Types.VARBINARY", "varbinary"},
+@DataTypeInfo(name="blob", aliases = {"longblob", "longvarbinary", "java.sql.Types.BLOB", "java.sql.Types.LONGBLOB", "java.sql.Types.LONGVARBINARY"},
         minParameters = 0, maxParameters = 0, priority = LiquibaseDataType.PRIORITY_DATABASE)
 public class BlobTypeHanaDB extends BlobType {
 
