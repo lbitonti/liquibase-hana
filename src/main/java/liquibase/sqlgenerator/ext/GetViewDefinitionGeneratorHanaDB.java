@@ -22,17 +22,16 @@ public class GetViewDefinitionGeneratorHanaDB extends GetViewDefinitionGenerator
 
     @Override
     public Sql[] generateSql(GetViewDefinitionStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        
     	if (!supports(statement, database)) {
-            return sqlGeneratorChain.generateSql(statement, database);
-        }
+    		return sqlGeneratorChain.generateSql(statement, database);
+    	}
 
     	String condSchemaColumn = (statement.getSchemaName() == null) ?  "" : " upper(SCHEMA_NAME)='" + statement.getSchemaName().toUpperCase() + "' AND"; 
-        String condViewNameColumn = " upper(VIEW_NAME)='" + statement.getViewName().toUpperCase() + "'";
+    	String condViewNameColumn = " upper(VIEW_NAME)='" + statement.getViewName().toUpperCase() + "'";
         
-        return new Sql[] {
+    	return new Sql[] {
         	new UnparsedSql("SELECT DEFINITION FROM VIEWS WHERE" + condSchemaColumn + condViewNameColumn )
-        };
+    	};
     }
 
 }
