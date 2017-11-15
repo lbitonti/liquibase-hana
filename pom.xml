@@ -5,7 +5,7 @@
    <groupId>com.github.lbitonti</groupId>
    <artifactId>liquibase-hana</artifactId>
    <name>Liquibase Hana support</name>
-   <version>3.1</version>
+   <version>3.1.1</version>
    <packaging>jar</packaging>
    <description>Liquibase support for SAP Hana DB</description>
 
