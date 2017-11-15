@@ -42,8 +42,8 @@ public class GetViewDefinitionGeneratorHanaDBTest extends AbstractSqlGeneratorHa
     public void testGetViewWithSchema() {
         Database database = new HanaDBDatabase();
         GetViewDefinitionStatement statement = new GetViewDefinitionStatement(null, "schema_name", "actual_view_name");
-
-        assertEquals("SELECT DEFINITION FROM VIEWS WHERE upper(VIEW_NAME)='ACTUAL_VIEW_NAME'",
+        
+        assertEquals("SELECT DEFINITION FROM VIEWS WHERE upper(SCHEMA_NAME)='SCHEMA_NAME' AND upper(VIEW_NAME)='ACTUAL_VIEW_NAME'",
                 this.generatorUnderTest.generateSql(statement, database, null)[0].toSql());
     }
 
