@@ -16,7 +16,7 @@ It's available from Maven Central. If you are using maven, add the following dep
 <dependency>
   <groupId>com.github.lbitonti</groupId>
   <artifactId>liquibase-hana</artifactId>
-  <version>3.1</version>
+  <version>3.1.1</version>
 </dependency>
 
 
